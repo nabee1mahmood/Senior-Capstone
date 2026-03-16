@@ -24,6 +24,8 @@ function ForgotPassword() {
               required
             />
           </div>
+
+          
           <button type="submit" className="btn btn-primary btn-block">
             Send reset link
           </button>

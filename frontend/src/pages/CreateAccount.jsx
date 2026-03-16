@@ -1,56 +1,117 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { createAccount } from '../api'
 
 function CreateAccount() {
+  const navigate = useNavigate()
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+
+
+    const form = e.target
+    const email = form.createEmail.value.trim()
+    const password = form.createPassword.value
+    const confirmPassword = form.confirmPassword.value
+
+
+    if (password !== confirmPassword) {
+      setError('Passwords does not match')
+      setLoading(false)
+      return
+    }
+
+    if (password.length <= 8) {
+      setError('Password must be at least 8 characters')
+      setLoading(false)
+      return
+    }
+
+    try {
+      const data = await createAccount(email, password)
+      if (data.success) {
+        navigate('/')
+        return
+      }
+      setError(data.message || 'Could not create account')
+    } catch (err) {
+      setError(err.message || 'Something went wrong')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="card shadow-sm">
       <div className="card-body">
         <h3 className="card-title mb-4 text-center">Create account</h3>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            alert("Create account (demo)");
-          }}
-        >
+
+        <form onSubmit={handleSubmit}>
+          {error && (
+            <div className="alert alert-danger small py-2" role="alert">
+              {error}
+            </div>
+          )}
+
           <div className="form-group">
             <label htmlFor="createEmail">Email address</label>
             <input
               type="email"
               className="form-control"
               id="createEmail"
+              name="createEmail"
               placeholder="Enter email"
               required
+              disabled={loading}
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="createPassword">Password</label>
             <input
               type="password"
               className="form-control"
               id="createPassword"
+              name="createPassword"
               placeholder="At least 8 characters"
               required
+              minLength={8}
+              disabled={loading}
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm password</label>
             <input
               type="password"
               className="form-control"
               id="confirmPassword"
+              name="confirmPassword"
               placeholder="Confirm password"
               required
+              disabled={loading}
             />
           </div>
-          <button type="submit" className="btn btn-primary btn-block">
-            Create account
+
+          <button
+            type="submit"
+            className="btn btn-primary btn-block"
+            disabled={loading}
+          >
+            {loading ? 'Creating account…' : 'Create account'}
           </button>
         </form>
+
         <p className="mt-3 text-center text-muted small mb-0">
           Already have an account? <Link to="/">Log in</Link>
         </p>
       </div>
     </div>
-  );
+  )
 }
 
-export default CreateAccount;
+export default CreateAccount

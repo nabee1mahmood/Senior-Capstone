@@ -10,6 +10,7 @@ function Home() {
         </Link>
       </header>
 
+
       <section className="stats-row row mb-4">
         <div className="col-6 col-md-3 mb-3">
           <div className="card shadow-sm h-100">
@@ -19,6 +20,8 @@ function Home() {
             </div>
           </div>
         </div>
+
+
         <div className="col-6 col-md-3 mb-3">
           <div className="card shadow-sm h-100">
             <div className="card-body">
@@ -27,6 +30,8 @@ function Home() {
             </div>
           </div>
         </div>
+
+
         <div className="col-6 col-md-3 mb-3">
           <div className="card shadow-sm h-100">
             <div className="card-body">
@@ -35,6 +40,8 @@ function Home() {
             </div>
           </div>
         </div>
+
+
         <div className="col-6 col-md-3 mb-3">
           <div className="card shadow-sm h-100">
             <div className="card-body">
@@ -45,12 +52,16 @@ function Home() {
         </div>
       </section>
 
+
       <section className="charts-row row">
         <div className="col-md-6 mb-4">
           <div className="card shadow-sm h-100">
             <div className="card-header bg-white font-weight-medium">
               Sensor activity
             </div>
+
+
+
             <div className="card-body d-flex align-items-end" style={{ minHeight: 200 }}>
               <div className="d-flex align-items-end gap-1 w-100" style={{ height: 160 }}>
                 {[65, 40, 80, 55, 70, 45, 90].map((h, i) => (
@@ -69,11 +80,15 @@ function Home() {
             </div>
           </div>
         </div>
+
+
         <div className="col-md-6 mb-4">
           <div className="card shadow-sm h-100">
             <div className="card-header bg-white font-weight-medium">
               Alerts by type
             </div>
+
+
             <div className="card-body" style={{ minHeight: 200 }}>
               <ul className="list-unstyled mb-0">
                 <li className="d-flex justify-content-between py-2 border-bottom">
@@ -99,6 +114,8 @@ function Home() {
           <div className="card-header bg-white font-weight-medium">
             Recent activity
           </div>
+
+          
           <div className="card-body">
             <p className="text-muted small mb-0">
               Living room sensor — 72°F · 2 min ago
