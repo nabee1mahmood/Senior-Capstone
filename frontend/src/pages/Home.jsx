@@ -5,6 +5,9 @@ function Home() {
     <div className="dashboard">
       <header className="dashboard-header d-flex justify-content-between align-items-center mb-4">
         <h1 className="h4 mb-0 font-weight-bold">Analytics Dashboard</h1>
+        <Link to="/account-settings" className="btn btn-outline-primary btn-sm mr-2">
+          Account settings
+        </Link>
         <Link to="/" className="btn btn-outline-secondary btn-sm">
           Log out
         </Link>
