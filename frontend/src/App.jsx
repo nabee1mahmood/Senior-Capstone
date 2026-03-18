@@ -8,7 +8,8 @@ import './index.css'
 
 function AppLayout() {
   const location = useLocation()
-  const isDashboard = location.pathname === '/home'
+  const dashboardRoutes = ['/home', '/account-settings']
+  const isDashboard = dashboardRoutes.includes(location.pathname)
 
   return (
     <div

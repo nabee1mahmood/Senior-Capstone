@@ -1,18 +1,53 @@
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 
 function Home() {
+  const [menuOpen, setMenuOpen] = useState(false)
+
   return (
     <div className="dashboard">
       <header className="dashboard-header d-flex justify-content-between align-items-center mb-4">
         <h1 className="h4 mb-0 font-weight-bold">Analytics Dashboard</h1>
-        <Link to="/account-settings" className="btn btn-outline-primary btn-sm mr-2">
-          Account settings
-        </Link>
-        <Link to="/" className="btn btn-outline-secondary btn-sm">
-          Log out
-        </Link>
-      </header>
 
+        <div className="position-relative">
+          <button
+            type="button"
+            className="btn btn-outline-secondary btn-sm"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            ☰
+          </button>
+
+          {menuOpen && (
+            <div
+              className="card shadow-sm position-absolute"
+              style={{
+                top: 'calc(100% + 8px)',
+                right: 0,
+                minWidth: 180,
+                zIndex: 1000,
+              }}
+            >
+              <div className="list-group list-group-flush">
+                <Link
+                  to="/account-settings"
+                  className="list-group-item list-group-item-action"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Account settings
+                </Link>
+                <Link
+                  to="/"
+                  className="list-group-item list-group-item-action text-danger"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Log out
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      </header>
 
       <section className="stats-row row mb-4">
         <div className="col-6 col-md-3 mb-3">
@@ -24,7 +59,6 @@ function Home() {
           </div>
         </div>
 
-
         <div className="col-6 col-md-3 mb-3">
           <div className="card shadow-sm h-100">
             <div className="card-body">
@@ -34,7 +68,6 @@ function Home() {
           </div>
         </div>
 
-
         <div className="col-6 col-md-3 mb-3">
           <div className="card shadow-sm h-100">
             <div className="card-body">
@@ -43,7 +76,6 @@ function Home() {
             </div>
           </div>
         </div>
-
 
         <div className="col-6 col-md-3 mb-3">
           <div className="card shadow-sm h-100">
@@ -55,15 +87,12 @@ function Home() {
         </div>
       </section>
 
-
       <section className="charts-row row">
         <div className="col-md-6 mb-4">
           <div className="card shadow-sm h-100">
             <div className="card-header bg-white font-weight-medium">
               Sensor activity
             </div>
-
-
 
             <div className="card-body d-flex align-items-end" style={{ minHeight: 200 }}>
               <div className="d-flex align-items-end gap-1 w-100" style={{ height: 160 }}>
@@ -84,13 +113,11 @@ function Home() {
           </div>
         </div>
 
-
         <div className="col-md-6 mb-4">
           <div className="card shadow-sm h-100">
             <div className="card-header bg-white font-weight-medium">
               Alerts by type
             </div>
-
 
             <div className="card-body" style={{ minHeight: 200 }}>
               <ul className="list-unstyled mb-0">
@@ -118,7 +145,6 @@ function Home() {
             Recent activity
           </div>
 
-          
           <div className="card-body">
             <p className="text-muted small mb-0">
               Living room sensor — 72°F · 2 min ago

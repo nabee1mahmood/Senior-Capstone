@@ -37,7 +37,7 @@ function AccountSettings() {
                       className="form-control"
                       id="firstName"
                       placeholder="Enter first name"
-                      defaultValue="Alex"
+                      defaultValue="Paul"
                     />
                   </div>
 
@@ -48,7 +48,7 @@ function AccountSettings() {
                       className="form-control"
                       id="lastName"
                       placeholder="Enter last name"
-                      defaultValue="Morgan"
+                      defaultValue="Mahmood"
                     />
                   </div>
                 </div>
@@ -60,7 +60,7 @@ function AccountSettings() {
                     className="form-control"
                     id="emailAddress"
                     placeholder="Enter email"
-                    defaultValue="alex@email.com"
+                    defaultValue="pmahmo00@email.com"
                   />
                 </div>
 
@@ -71,7 +71,7 @@ function AccountSettings() {
                     className="form-control"
                     id="phoneNumber"
                     placeholder="Enter phone number"
-                    defaultValue="(555) 123-4567"
+                    defaultValue="(420) 069-1337"
                   />
                 </div>
 
