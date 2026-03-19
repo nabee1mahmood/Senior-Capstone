@@ -1,16 +1,31 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import './Home.css'
 
 function Home() {
+  const [darkMode, setDarkMode] = useState(false)
+
   return (
-    <div className="dashboard">
-      <header className="dashboard-header d-flex justify-content-between align-items-center mb-4">
+    <div className={`dashboard ${darkMode ? 'dark' : 'light'}`}>
+      {/* Navbar */}
+      <nav className="navbar d-flex justify-content-between align-items-center">
         <h1 className="h4 mb-0 font-weight-bold">Analytics Dashboard</h1>
-        <Link to="/" className="btn btn-outline-secondary btn-sm">
-          Log out
-        </Link>
-      </header>
 
+        <div>
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="btn btn-sm btn-outline-primary me-2"
+          >
+            {darkMode ? "Light Mode" : "Dark Mode"}
+          </button>
 
+          <Link to="/" className="btn btn-outline-secondary btn-sm">
+            Log out
+          </Link>
+        </div>
+      </nav>
+
+      {/* Stats section */}
       <section className="stats-row row mb-4">
         <div className="col-6 col-md-3 mb-3">
           <div className="card shadow-sm h-100">
@@ -21,7 +36,6 @@ function Home() {
           </div>
         </div>
 
-
         <div className="col-6 col-md-3 mb-3">
           <div className="card shadow-sm h-100">
             <div className="card-body">
@@ -31,7 +45,6 @@ function Home() {
           </div>
         </div>
 
-
         <div className="col-6 col-md-3 mb-3">
           <div className="card shadow-sm h-100">
             <div className="card-body">
@@ -40,7 +53,6 @@ function Home() {
             </div>
           </div>
         </div>
-
 
         <div className="col-6 col-md-3 mb-3">
           <div className="card shadow-sm h-100">
@@ -52,27 +64,20 @@ function Home() {
         </div>
       </section>
 
-
+      {/* Charts section */}
       <section className="charts-row row">
         <div className="col-md-6 mb-4">
           <div className="card shadow-sm h-100">
-            <div className="card-header bg-white font-weight-medium">
+            <div className="card-header font-weight-medium">
               Sensor activity
             </div>
-
-
-
             <div className="card-body d-flex align-items-end" style={{ minHeight: 200 }}>
               <div className="d-flex align-items-end gap-1 w-100" style={{ height: 160 }}>
                 {[65, 40, 80, 55, 70, 45, 90].map((h, i) => (
                   <div
                     key={i}
                     className="flex-grow-1 bg-primary rounded"
-                    style={{
-                      height: `${h}%`,
-                      minWidth: 24,
-                      opacity: 0.85,
-                    }}
+                    style={{ height: `${h}%`, minWidth: 24, opacity: 0.85 }}
                     title={`${h}%`}
                   />
                 ))}
@@ -81,14 +86,9 @@ function Home() {
           </div>
         </div>
 
-
         <div className="col-md-6 mb-4">
           <div className="card shadow-sm h-100">
-            <div className="card-header bg-white font-weight-medium">
-              Alerts by type
-            </div>
-
-
+            <div className="card-header font-weight-medium">Alerts by type</div>
             <div className="card-body" style={{ minHeight: 200 }}>
               <ul className="list-unstyled mb-0">
                 <li className="d-flex justify-content-between py-2 border-bottom">
@@ -109,13 +109,10 @@ function Home() {
         </div>
       </section>
 
+      {/* Recent activity */}
       <section className="recent-activity">
         <div className="card shadow-sm">
-          <div className="card-header bg-white font-weight-medium">
-            Recent activity
-          </div>
-
-          
+          <div className="card-header font-weight-medium">Recent activity</div>
           <div className="card-body">
             <p className="text-muted small mb-0">
               Living room sensor — 72°F · 2 min ago

@@ -1,0 +1,51 @@
+/* Default light mode */
+.dashboard.light {
+  background-color: #f8f9fa;
+  color: #000;
+}
+
+/* Dark mode */
+.dashboard.dark {
+  background-color: #121212;
+  color: #fff;
+}
+
+/* Cards */
+.dashboard.light .card {
+  background-color: #fff;
+  color: #000;
+}
+
+.dashboard.dark .card {
+  background-color: #1e1e1e;
+  color: #fff;
+}
+
+/* Navbar */
+.dashboard.light .navbar {
+  background-color: #ffffff;
+  color: #1f2937;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.dashboard.dark .navbar {
+  background-color: #1f2937;
+  color: #f3f4f6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+/* Text muted */
+.dashboard.light .text-muted {
+  color: #6c757d;
+}
+.dashboard.dark .text-muted {
+  color: #aaa;
+}
+
+/* Primary bars / charts */
+.dashboard.light .bg-primary {
+  background-color: #4dabf7;
+}
+.dashboard.dark .bg-primary {
+  background-color: #4dabf7; /* or slightly lighter for dark mode */
+}
