@@ -1,0 +1,36 @@
+/* Default (light mode) */
+.dashboard.light {
+  background-color: #f8f9fa;
+  color: #212529;
+  min-height: 100vh;
+}
+
+/* Dark mode */
+.dashboard.dark {
+  background-color: #121212;
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+/* Cards in dark mode */
+.dashboard.dark .card {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  border: 1px solid #333;
+}
+
+/* Headers in dark mode */
+.dashboard.dark .card-header {
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #333;
+}
+
+/* Text tweaks */
+.dashboard.dark .text-muted {
+  color: #bbbbbb !important;
+}
+
+/* Recent Activity-Texts */
+.dashboard.dark .text-muted {
+  color: #ffffff !important;
+}
