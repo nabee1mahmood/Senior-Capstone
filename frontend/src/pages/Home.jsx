@@ -1,15 +1,20 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import './Home.css'
 
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [darkMode, setDarkMode] = useState(false)
 
   return (
-    <div className="dashboard">
+    <div className={`dashboard ${darkMode ? 'dark' : 'light'}`}>
+
+      {/* Header */}
       <header className="dashboard-header d-flex justify-content-between align-items-center mb-4">
         <h1 className="h4 mb-0 font-weight-bold">Analytics Dashboard</h1>
 
         <div className="position-relative">
+          {/* Menu Button */}
           <button
             type="button"
             className="btn btn-outline-secondary btn-sm"
@@ -18,30 +23,41 @@ function Home() {
             ☰
           </button>
 
+          {/* Dropdown */}
           {menuOpen && (
             <div
               className="card shadow-sm position-absolute"
               style={{
                 top: 'calc(100% + 8px)',
                 right: 0,
-                minWidth: 180,
+                minWidth: 200,
                 zIndex: 1000,
               }}
             >
               <div className="list-group list-group-flush">
+
+                {/* Dark Mode Toggle INSIDE menu */}
+                <button
+                  className="list-group-item list-group-item-action"
+                  onClick={() => setDarkMode(!darkMode)}
+                >
+                  {darkMode ? "Light Mode" : "Dark Mode"}
+                </button>
+
                 <Link
                   to="/account-settings"
                   className="list-group-item list-group-item-action"
                   onClick={() => setMenuOpen(false)}
                 >
-                  Account settings
+                  Account Settings
                 </Link>
+
                 <Link
                   to="/"
                   className="list-group-item list-group-item-action text-danger"
                   onClick={() => setMenuOpen(false)}
                 >
-                  Log out
+                  Log Out
                 </Link>
               </div>
             </div>
@@ -49,6 +65,7 @@ function Home() {
         </div>
       </header>
 
+      {/* Stats */}
       <section className="stats-row row mb-4">
         <div className="col-6 col-md-3 mb-3">
           <div className="card shadow-sm h-100">
@@ -87,11 +104,12 @@ function Home() {
         </div>
       </section>
 
+      {/* Charts */}
       <section className="charts-row row">
         <div className="col-md-6 mb-4">
           <div className="card shadow-sm h-100">
-            <div className="card-header bg-white font-weight-medium">
-              Sensor activity
+            <div className="card-header font-weight-medium">
+              Sensor Activity
             </div>
 
             <div className="card-body d-flex align-items-end" style={{ minHeight: 200 }}>
@@ -115,8 +133,8 @@ function Home() {
 
         <div className="col-md-6 mb-4">
           <div className="card shadow-sm h-100">
-            <div className="card-header bg-white font-weight-medium">
-              Alerts by type
+            <div className="card-header font-weight-medium">
+              Alerts by Type
             </div>
 
             <div className="card-body" style={{ minHeight: 200 }}>
@@ -139,25 +157,27 @@ function Home() {
         </div>
       </section>
 
+      {/* Activity */}
       <section className="recent-activity">
         <div className="card shadow-sm">
-          <div className="card-header bg-white font-weight-medium">
-            Recent activity
+          <div className="card-header font-weight-medium">
+            Recent Activity
           </div>
 
           <div className="card-body">
             <p className="text-muted small mb-0">
-              Living room sensor — 72°F · 2 min ago
+              Living Room Sensor — 72°F · 2 min ago
             </p>
             <p className="text-muted small mb-0 mt-2">
-              Front door — opened · 15 min ago
+              Front Door — Opened · 15 min ago
             </p>
             <p className="text-muted small mb-0 mt-2">
-              Kitchen — motion detected · 1 hr ago
+              Kitchen — Motion Detected · 1 hr ago
             </p>
           </div>
         </div>
       </section>
+
     </div>
   )
 }
