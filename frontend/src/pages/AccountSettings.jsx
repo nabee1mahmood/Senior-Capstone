@@ -7,7 +7,7 @@ function AccountSettings() {
         <h1 className="h4 mb-0 font-weight-bold">Account Settings</h1>
         <div className="d-flex gap-2">
           <Link to="/home" className="btn btn-outline-secondary btn-sm mr-2">
-            Back to Dashboard
+            Back To Dashboard
           </Link>
           <Link to="/" className="btn btn-outline-secondary btn-sm">
             Log Out
@@ -97,7 +97,7 @@ function AccountSettings() {
               <p className="font-weight-bold mb-3">12 Devices</p>
 
               <p className="text-muted small mb-1">Last Login</p>
-              <p className="font-weight-bold mb-0">Today at 8:42 AM</p>
+              <p className="font-weight-bold mb-0">Today At 8:42 AM</p>
             </div>
           </div>
         </div>

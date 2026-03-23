@@ -4,12 +4,15 @@ import CreateAccount from './pages/CreateAccount'
 import AccountSettings from './pages/AccountSettings'
 import ForgotPassword from './pages/ForgotPassword'
 import Home from './pages/Home'
+import DayDetails from './pages/DayDetails'
 import './index.css'
 
 function AppLayout() {
   const location = useLocation()
-  const dashboardRoutes = ['/home', '/account-settings']
-  const isDashboard = dashboardRoutes.includes(location.pathname)
+  const dashboardRoutes = ['/home', '/account-settings', '/day/:day']
+  const isDashboard = dashboardRoutes.some(route =>
+    location.pathname.startsWith(route.replace(':day', ''))
+  )
 
   return (
     <div
@@ -26,6 +29,7 @@ function AppLayout() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/account-settings" element={<AccountSettings />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/day/:day" element={<DayDetails />} /> {/* <-- new */}
         </Routes>
       </div>
     </div>
