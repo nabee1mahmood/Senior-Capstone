@@ -7,10 +7,10 @@ function AccountSettings() {
         <h1 className="h4 mb-0 font-weight-bold">Account Settings</h1>
         <div className="d-flex gap-2">
           <Link to="/home" className="btn btn-outline-secondary btn-sm mr-2">
-            Back to dashboard
+            Back To Dashboard
           </Link>
           <Link to="/" className="btn btn-outline-secondary btn-sm">
-            Log out
+            Log Out
           </Link>
         </div>
       </header>
@@ -19,7 +19,7 @@ function AccountSettings() {
         <div className="col-lg-8 mb-4">
           <div className="card shadow-sm h-100">
             <div className="card-header bg-white font-weight-medium">
-              Profile information
+              Profile Information
             </div>
 
             <div className="card-body">
@@ -31,7 +31,7 @@ function AccountSettings() {
               >
                 <div className="form-row">
                   <div className="form-group col-md-6">
-                    <label htmlFor="firstName">First name</label>
+                    <label htmlFor="firstName">First Name</label>
                     <input
                       type="text"
                       className="form-control"
@@ -42,7 +42,7 @@ function AccountSettings() {
                   </div>
 
                   <div className="form-group col-md-6">
-                    <label htmlFor="lastName">Last name</label>
+                    <label htmlFor="lastName">Last Name</label>
                     <input
                       type="text"
                       className="form-control"
@@ -54,7 +54,7 @@ function AccountSettings() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="emailAddress">Email address</label>
+                  <label htmlFor="emailAddress">Email Address</label>
                   <input
                     type="email"
                     className="form-control"
@@ -65,7 +65,7 @@ function AccountSettings() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="phoneNumber">Phone number</label>
+                  <label htmlFor="phoneNumber">Phone Number</label>
                   <input
                     type="tel"
                     className="form-control"
@@ -76,7 +76,7 @@ function AccountSettings() {
                 </div>
 
                 <button type="submit" className="btn btn-primary">
-                  Save changes
+                  Save Changes
                 </button>
               </form>
             </div>
@@ -86,18 +86,18 @@ function AccountSettings() {
         <div className="col-lg-4 mb-4">
           <div className="card shadow-sm h-100">
             <div className="card-header bg-white font-weight-medium">
-              Account summary
+              Account Summary
             </div>
 
             <div className="card-body">
               <p className="text-muted small mb-1">Plan</p>
               <p className="font-weight-bold mb-3">Standard</p>
 
-              <p className="text-muted small mb-1">Connected sensors</p>
-              <p className="font-weight-bold mb-3">12 devices</p>
+              <p className="text-muted small mb-1">Connected Sensors</p>
+              <p className="font-weight-bold mb-3">12 Devices</p>
 
-              <p className="text-muted small mb-1">Last login</p>
-              <p className="font-weight-bold mb-0">Today at 8:42 AM</p>
+              <p className="text-muted small mb-1">Last Login</p>
+              <p className="font-weight-bold mb-0">Today At 8:42 AM</p>
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@ function AccountSettings() {
         <div className="col-md-6 mb-4">
           <div className="card shadow-sm h-100">
             <div className="card-header bg-white font-weight-medium">
-              Change password
+              Change Password
             </div>
 
             <div className="card-body">
@@ -118,7 +118,7 @@ function AccountSettings() {
                 }}
               >
                 <div className="form-group">
-                  <label htmlFor="currentPassword">Current password</label>
+                  <label htmlFor="currentPassword">Current Password</label>
                   <input
                     type="password"
                     className="form-control"
@@ -128,7 +128,7 @@ function AccountSettings() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="newPassword">New password</label>
+                  <label htmlFor="newPassword">New Password</label>
                   <input
                     type="password"
                     className="form-control"
@@ -138,7 +138,7 @@ function AccountSettings() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="confirmNewPassword">Confirm new password</label>
+                  <label htmlFor="confirmNewPassword">Confirm New Password</label>
                   <input
                     type="password"
                     className="form-control"
@@ -148,7 +148,7 @@ function AccountSettings() {
                 </div>
 
                 <button type="submit" className="btn btn-primary">
-                  Update password
+                  Update Password
                 </button>
               </form>
             </div>
@@ -176,7 +176,7 @@ function AccountSettings() {
                     defaultChecked
                   />
                   <label className="custom-control-label" htmlFor="emailAlerts">
-                    Email alerts
+                    Email Alerts
                   </label>
                 </div>
 
@@ -187,7 +187,7 @@ function AccountSettings() {
                     id="smsAlerts"
                   />
                   <label className="custom-control-label" htmlFor="smsAlerts">
-                    SMS notifications
+                    SMS Notifications
                   </label>
                 </div>
 
@@ -199,12 +199,12 @@ function AccountSettings() {
                     defaultChecked
                   />
                   <label className="custom-control-label" htmlFor="weeklyReports">
-                    Weekly reports
+                    Weekly Reports
                   </label>
                 </div>
 
                 <button type="submit" className="btn btn-primary">
-                  Save preferences
+                  Save Preferences
                 </button>
               </form>
             </div>
@@ -215,14 +215,14 @@ function AccountSettings() {
       <section>
         <div className="card shadow-sm border-danger">
           <div className="card-header bg-white font-weight-medium text-danger">
-            Danger zone
+            Danger Zone
           </div>
 
           <div className="card-body d-flex flex-column flex-md-row justify-content-between align-items-md-center">
             <div className="mb-3 mb-md-0">
-              <p className="mb-1 font-weight-medium">Delete account</p>
+              <p className="mb-1 font-weight-medium">Delete Account</p>
               <p className="text-muted small mb-0">
-                Permanently remove your account and sensor history.
+                Permanently Remove Your Account and Sensor History.
               </p>
             </div>
 
@@ -231,7 +231,7 @@ function AccountSettings() {
               className="btn btn-outline-danger"
               onClick={() => alert('Delete account (demo)')}
             >
-              Delete account
+              Delete Account
             </button>
           </div>
         </div>
