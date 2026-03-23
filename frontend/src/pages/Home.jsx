@@ -159,8 +159,8 @@ function Home() {
 
             {/* Legend */}
             <div className="px-3 pb-2 small d-flex gap-3">
-              <span className="text-success">● Normal</span>
-              <span className="text-warning">● Warning</span>
+              <span className="text-success mr-3">● Normal</span>
+              <span className="text-warning mr-3">● Warning</span>
               <span className="text-danger">● Critical</span>
             </div>
           </div>
