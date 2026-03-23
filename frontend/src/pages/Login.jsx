@@ -1,32 +1,33 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { login } from '../api'
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../api";
 
 function Login() {
-  const navigate = useNavigate()
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e) {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    const form = e.target
-    const email = form.emailInput.value.trim()
-    const password = form.passwordInput.value
+    const form = e.target;
+    const email = form.emailInput.value.trim();
+    const password = form.passwordInput.value;
 
     try {
-      const data = await login(email, password)
+      const data = await login(email, password);
       if (data.success) {
-        navigate('/home')
-        return
+        navigate("/home");
+        return;
       }
-      setError(data.message || 'Login failed')
+      setError(data.message || "Login failed");
     } catch (err) {
-      setError(err.message || 'Something went wrong')
+      setError(err.message || "Something went wrong");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -37,7 +38,7 @@ function Login() {
           <img
             src="/HomeSensor.png"
             alt="Home Sensor logo"
-            style={{ maxWidth: '220px', width: '100%', height: 'auto' }}
+            style={{ maxWidth: "220px", width: "100%", height: "auto" }}
           />
           <h5 className="mt-2">HomeSense Login Page</h5>
         </div>
@@ -50,26 +51,42 @@ function Login() {
           )}
 
           <div className="form-group">
-            <label htmlFor="emailInput">Email address</label>
+            <label htmlFor="emailInput">Email Address</label>
             <input
               type="email"
               className="form-control"
               id="emailInput"
               name="emailInput"
-              placeholder="Please enter your email"
+              placeholder="Please Enter Your Email"
               required
               disabled={loading}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="passwordInput">Password</label>
+            <div className="d-flex align-items-center">
+              <label htmlFor="passwordInput" className="mb-0 mr-2">
+                Password
+              </label>
+
+              <i
+                className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  cursor: "pointer",
+                  fontSize: "1.2rem",
+                  color: "#6c757d",
+                }}
+                title={showPassword ? "Hide password" : "Show password"}
+              ></i>
+            </div>
+
             <input
-              type="password"
-              className="form-control"
+              type={showPassword ? "text" : "password"}
+              className="form-control mt-1"
               id="passwordInput"
               name="passwordInput"
-              placeholder="Please enter your password"
+              placeholder="Please Enter Your Password"
               required
               disabled={loading}
             />
@@ -80,7 +97,7 @@ function Login() {
             className="btn btn-primary btn-block"
             disabled={loading}
           >
-            {loading ? 'Logging in…' : 'Login'}
+            {loading ? "Logging in…" : "Login"}
           </button>
         </form>
 
@@ -98,7 +115,7 @@ function Login() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Login
+export default Login;
