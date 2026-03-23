@@ -34,3 +34,9 @@
 .dashboard.dark .text-muted {
   color: #ffffff !important;
 }
+
+.dashboard {
+  min-height: 100vh;   /* fills full screen height */
+  width: 100%;         /* fills full width */
+  padding: 20px;
+}

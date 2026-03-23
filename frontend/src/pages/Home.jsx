@@ -1,14 +1,18 @@
-import { Link } from 'react-router-dom'
-import { useState } from 'react'
-import './Home.css'
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import "./Home.css";
 
 function Home() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [darkMode, setDarkMode] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  // ✅ Apply dark/light mode to entire page (BODY)
+  useEffect(() => {
+    document.body.className = darkMode ? "dark" : "light";
+  }, [darkMode]);
 
   return (
-    <div className={`dashboard ${darkMode ? 'dark' : 'light'}`}>
-
+    <div className={`dashboard ${darkMode ? "dark" : "light"}`}>
       {/* Header */}
       <header className="dashboard-header d-flex justify-content-between align-items-center mb-4">
         <h1 className="h4 mb-0 font-weight-bold">Analytics Dashboard</h1>
@@ -28,15 +32,14 @@ function Home() {
             <div
               className="card shadow-sm position-absolute"
               style={{
-                top: 'calc(100% + 8px)',
+                top: "calc(100% + 8px)",
                 right: 0,
                 minWidth: 200,
                 zIndex: 1000,
               }}
             >
               <div className="list-group list-group-flush">
-
-                {/* Dark Mode Toggle INSIDE menu */}
+                {/* Dark Mode Toggle */}
                 <button
                   className="list-group-item list-group-item-action"
                   onClick={() => setDarkMode(!darkMode)}
@@ -112,30 +115,40 @@ function Home() {
               Sensor Activity
             </div>
 
-            <div className="card-body d-flex align-items-end" style={{ minHeight: 200 }}>
-              <div className="d-flex align-items-end gap-1 w-100" style={{ height: 160 }}>
-                {[65, 40, 80, 55, 70, 45, 90].map((h, i) => (
-                  <div
-                    key={i}
-                    className="flex-grow-1 bg-primary rounded"
+            <div
+              className="d-flex align-items-end gap-1 w-100"
+              style={{ height: 160 }}
+            >
+              {[65, 40, 80, 55, 70, 45, 90].map((h, i) => (
+                <div
+                  key={i}
+                  className="flex-grow-1 bg-primary rounded d-flex align-items-end justify-content-center"
+                  style={{
+                    height: `${h}%`,
+                    minWidth: 24,
+                    opacity: 0.85,
+                    position: "relative",
+                  }}
+                >
+                  <span
                     style={{
-                      height: `${h}%`,
-                      minWidth: 24,
-                      opacity: 0.85,
+                      color: "white", // text color
+                      fontWeight: "bold", // make it bold
+                      fontSize: "0.8rem", // adjust size
+                      marginBottom: 2, // small padding from bottom
                     }}
-                    title={`${h}%`}
-                  />
-                ))}
-              </div>
+                  >
+                    {h}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
         <div className="col-md-6 mb-4">
           <div className="card shadow-sm h-100">
-            <div className="card-header font-weight-medium">
-              Alerts by Type
-            </div>
+            <div className="card-header font-weight-medium">Alerts by Type</div>
 
             <div className="card-body" style={{ minHeight: 200 }}>
               <ul className="list-unstyled mb-0">
@@ -160,9 +173,7 @@ function Home() {
       {/* Activity */}
       <section className="recent-activity">
         <div className="card shadow-sm">
-          <div className="card-header font-weight-medium">
-            Recent Activity
-          </div>
+          <div className="card-header font-weight-medium">Recent Activity</div>
 
           <div className="card-body">
             <p className="text-muted small mb-0">
@@ -177,9 +188,8 @@ function Home() {
           </div>
         </div>
       </section>
-
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;
