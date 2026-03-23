@@ -4,13 +4,16 @@ import "./Home.css";
 
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("theme") === "dark";
+  });
   const navigate = useNavigate();
 
-  // Apply dark/light mode
   useEffect(() => {
-    document.body.className = darkMode ? "dark" : "light";
-  }, [darkMode]);
+  const theme = darkMode ? "dark" : "light";
+  document.body.className = theme;
+  localStorage.setItem("theme", theme);
+}, [darkMode]);
 
   const getColor = (value) => {
     if (value < 50) return "bg-success";
@@ -209,4 +212,3 @@ function Home() {
 }
 
 export default Home;
-
