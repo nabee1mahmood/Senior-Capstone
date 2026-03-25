@@ -28,9 +28,6 @@ body {
 body {
   font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
     sans-serif;
-  color: var(--gf-text);
-  background: var(--page-bg);
-  -webkit-font-smoothing: antialiased;
 }
 
 #root {
@@ -300,7 +297,11 @@ body {
   font-size: 0.9rem;
 }
 
-.field span {
+body.light .field span {
+  color: #6b7280;
+}
+
+body.dark .field span {
   color: #d1d5db;
 }
 
@@ -308,9 +309,19 @@ body {
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid #4b5563;
-  background: rgba(255, 255, 255, 0.9);
-  color: #f9fafb;
   outline: none;
+}
+
+/* Light mode input */
+body.light .field input {
+  background: rgba(255, 255, 255, 0.9);
+  color: #111827;
+}
+
+/* Dark mode input */
+body.dark .field input {
+  background: #1e293b;
+  color: #f9fafb;
 }
 
 .field input:focus {
@@ -358,6 +369,7 @@ body {
   color: #9ca3af;
 }
 
+/* Right panel */
 .auth-right {
   display: flex;
 }
@@ -391,9 +403,26 @@ body {
 }
 
 body.light {
-  background-color: var(--page-bg-muted);
+  background-color: #f8f9fa;
+  color: #212529;
 }
 
 body.dark {
-  background-color: #343a40;
+  background-color: #121212;
+  color: #ffffff;
+}
+
+body.dark .card {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  border-color: #333;
+}
+
+body.dark .card-header {
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #444;
+}
+
+body.dark .text-muted {
+  color: #bbbbbb !important;
 }

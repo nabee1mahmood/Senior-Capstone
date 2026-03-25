@@ -1,9 +1,9 @@
 import { useParams, Link } from "react-router-dom";
+import './DayDetails.css'; // Import custom CSS
 
 function DayDetails() {
   const { day } = useParams();
 
-  // Mock data for sensors
   const sensors = [
     { name: "Living Room", type: "Temperature", value: `${Math.floor(65 + Math.random() * 10)}°F`, time: "08:00 AM" },
     { name: "Kitchen", type: "Temperature", value: `${Math.floor(60 + Math.random() * 15)}°F`, time: "10:30 AM" },
@@ -14,30 +14,32 @@ function DayDetails() {
   ];
 
   return (
-    <div className="container mt-4 gf-page">
-      <h2 className="gf-dashboard-title">Details for {day}</h2>
-      <p>Here you can see all logged sensor data for {day}.</p>
+    <div className="day-details container mt-4">
+      <h2 className="dd-header">Details for {day}</h2>
+      <p className="dd-subtitle">Here you can see all logged sensor data for {day}.</p>
 
-      <table className="table table-striped mt-3">
-        <thead>
-          <tr>
-            <th>Sensor</th>
-            <th>Type</th>
-            <th>Value</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sensors.map((sensor, idx) => (
-            <tr key={idx}>
-              <td>{sensor.name}</td>
-              <td>{sensor.type}</td>
-              <td>{sensor.value}</td>
-              <td>{sensor.time}</td>
+      <div className="table-responsive">
+        <table className="table table-striped table-hover dd-table mt-3">
+          <thead>
+            <tr>
+              <th>Sensor</th>
+              <th>Type</th>
+              <th>Value</th>
+              <th>Time</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sensors.map((sensor, idx) => (
+              <tr key={idx}>
+                <td>{sensor.name}</td>
+                <td>{sensor.type}</td>
+                <td>{sensor.value}</td>
+                <td>{sensor.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <Link to="/home" className="btn btn-primary mt-3">
         ← Back to Dashboard
