@@ -2,20 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./Home.css";
 
-function Home() {
+function Home({ darkMode, setDarkMode }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(
-    () => localStorage.getItem("theme") === "dark"
-  );
   const [showChartModal, setShowChartModal] = useState(false);
   const [filter, setFilter] = useState("all");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const theme = darkMode ? "dark" : "light";
-    document.body.className = theme;
-    localStorage.setItem("theme", theme);
-  }, [darkMode]);
 
   useEffect(() => {
     document.body.style.overflow = showChartModal ? "hidden" : "auto";
@@ -51,7 +42,6 @@ function Home() {
       <header className="dashboard-header d-flex justify-content-between align-items-center mb-4">
         <h1 className="h4 mb-0 font-weight-bold">Analytics Dashboard</h1>
 
-        {/* 🔥 FIXED HERE */}
         <div className="position-relative" style={{ zIndex: 9999 }}>
           <button
             className="btn btn-outline-secondary btn-sm"
@@ -67,7 +57,7 @@ function Home() {
                 top: "calc(100% + 8px)",
                 right: 0,
                 minWidth: 200,
-                zIndex: 9999, // 🔥 ensures it's above everything
+                zIndex: 9999,
               }}
             >
               <div className="list-group list-group-flush">

@@ -1,22 +1,49 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+
 import Login from './pages/Login'
 import CreateAccount from './pages/CreateAccount'
 import AccountSettings from './pages/AccountSettings'
 import ForgotPassword from './pages/ForgotPassword'
 import Home from './pages/Home'
 import DayDetails from './pages/DayDetails'
+
 import './index.css'
 
 function AppLayout() {
   const location = useLocation()
-  const dashboardRoutes = ['/home', '/account-settings', '/day/:day']
+
+  // 🌙 Global Dark Mode State
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("theme") === "dark"
+  )
+
+  // 🌙 Apply theme globally
+  useEffect(() => {
+    const theme = darkMode ? "dark" : "light"
+
+    // prevent overwriting other classes
+    document.body.classList.remove("light", "dark")
+    document.body.classList.add(theme)
+
+    localStorage.setItem("theme", theme)
+  }, [darkMode])
+
+  // detect dashboard pages
+  const dashboardRoutes = ['/home', '/account-settings', '/day/']
   const isDashboard = dashboardRoutes.some(route =>
-    location.pathname.startsWith(route.replace(':day', ''))
+    location.pathname.startsWith(route)
   )
 
   return (
     <div
-      className={`d-flex bg-light w-100 ${isDashboard ? 'align-items-start' : 'justify-content-center align-items-center'}`}
+      className={`d-flex w-100 ${
+        darkMode ? 'bg-dark text-light' : 'bg-light'
+      } ${
+        isDashboard
+          ? 'align-items-start'
+          : 'justify-content-center align-items-center'
+      }`}
       style={{ minHeight: '100vh', padding: 16 }}
     >
       <div
@@ -24,12 +51,30 @@ function AppLayout() {
         style={{ maxWidth: isDashboard ? 'none' : 400 }}
       >
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/create-account" element={<CreateAccount />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/account-settings" element={<AccountSettings />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/day/:day" element={<DayDetails />} /> {/* <-- new */}
+          <Route
+            path="/"
+            element={<Login darkMode={darkMode} setDarkMode={setDarkMode} />}
+          />
+          <Route
+            path="/create-account"
+            element={<CreateAccount darkMode={darkMode} setDarkMode={setDarkMode} />}
+          />
+          <Route
+            path="/forgot-password"
+            element={<ForgotPassword darkMode={darkMode} setDarkMode={setDarkMode} />}
+          />
+          <Route
+            path="/account-settings"
+            element={<AccountSettings darkMode={darkMode} setDarkMode={setDarkMode} />}
+          />
+          <Route
+            path="/home"
+            element={<Home darkMode={darkMode} setDarkMode={setDarkMode} />}
+          />
+          <Route
+            path="/day/:day"
+            element={<DayDetails darkMode={darkMode} setDarkMode={setDarkMode} />}
+          />
         </Routes>
       </div>
     </div>

@@ -1,0 +1,89 @@
+/* =====================
+   AccountSettings Dark/Light Mode
+===================== */
+
+/* Cards */
+.custom-card {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb; /* light mode border */
+  background-color: #ffffff;   /* light mode background */
+  color: #111827;              /* light mode text */
+}
+
+body.dark .custom-card {
+  background-color: #1e1e1e;   /* dark mode background */
+  border-color: #333;
+  color: #ffffff;
+}
+
+/* Card headers */
+.card-header {
+  background-color: transparent; /* default transparent so theme works */
+  font-weight: 500;
+}
+
+body.dark .card-header {
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #444;
+  color: #ffffff;
+}
+
+/* Form Inputs */
+.custom-input {
+  border-radius: 10px;
+  padding: 10px 12px;
+  width: 100%;
+  outline: none;
+  border: 1px solid #ced4da;  /* light mode border */
+  background-color: #ffffff;    /* light mode input background */
+  color: #111827;               /* light mode text */
+}
+
+.custom-input::placeholder {
+  color: #9ca3af; /* subtle placeholder text */
+}
+
+body.dark .custom-input {
+  background-color: #1e293b;
+  color: #f9fafb;
+  border: 1px solid #444;
+}
+
+body.dark .custom-input::placeholder {
+  color: #9ca3af;
+}
+
+/* Buttons */
+body.dark .btn-outline-secondary {
+  color: #ddd;
+  border-color: #555;
+}
+
+body.dark .btn-outline-secondary:hover {
+  background-color: #333;
+  border-color: #777;
+}
+
+/* Danger Zone */
+body.dark .border-danger {
+  border-color: #7f1d1d !important;
+}
+
+body.dark .text-danger {
+  color: #f87171 !important;
+}
+
+/* Text muted */
+body.dark .text-muted {
+  color: #bbbbbb !important;
+}
+
+/* Toggle switches (Bootstrap 5) */
+body.dark .form-check-input:checked {
+  background-color: #22c55e;
+  border-color: #16a34a;
+}
+
+body.dark .form-check-label {
+  color: #f9fafb;
+}
