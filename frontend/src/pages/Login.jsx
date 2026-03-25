@@ -32,7 +32,7 @@ function Login() {
   }
 
   return (
-    <div className="card shadow-sm">
+    <div className="card shadow-sm gf-auth-card">
       <div className="card-body">
         <div className="text-center mb-3">
           <img
@@ -75,7 +75,6 @@ function Login() {
                 style={{
                   cursor: "pointer",
                   fontSize: "1.2rem",
-                  color: "#6c757d",
                 }}
                 title={showPassword ? "Hide password" : "Show password"}
               ></i>

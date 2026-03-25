@@ -45,11 +45,11 @@ function Home() {
   ];
 
   return (
-    <div className={`dashboard ${darkMode ? "dark" : "light"}`}>
+    <div className={`dashboard gf-dashboard ${darkMode ? "dark" : "light"}`}>
 
       {/* HEADER */}
       <header className="dashboard-header d-flex justify-content-between align-items-center mb-4">
-        <h1 className="h4 mb-0 font-weight-bold">Analytics Dashboard</h1>
+        <h1 className="h4 mb-0 font-weight-bold gf-dashboard-title">Analytics Dashboard</h1>
 
         {/* 🔥 FIXED HERE */}
         <div className="position-relative" style={{ zIndex: 9999 }}>
@@ -94,7 +94,11 @@ function Home() {
       {/* SUMMARY */}
       <section className="row mb-4">
         {summaryStats.map((stat, i) => (
-          <div key={i} className="col-6 col-md-4 mb-3">
+          <div
+            key={i}
+            className="col-6 col-md-4 mb-3 gf-stagger-in"
+            style={{ animationDelay: `${i * 0.07}s` }}
+          >
             <div className="card shadow-sm h-100 text-center">
               <div className="card-body">
                 <p className="text-muted small mb-1">{stat.label}</p>
@@ -113,7 +117,11 @@ function Home() {
           { label: "Avg. Temperature (Today)", value: "64°F" },
           { label: "Humidity", value: "45%" },
         ].map((stat, i) => (
-          <div key={i} className="col-6 col-md-3 mb-3">
+          <div
+            key={i}
+            className="col-6 col-md-3 mb-3 gf-stagger-in"
+            style={{ animationDelay: `${0.2 + i * 0.06}s` }}
+          >
             <div className="card shadow-sm h-100">
               <div className="card-body">
                 <p className="text-muted small">{stat.label}</p>

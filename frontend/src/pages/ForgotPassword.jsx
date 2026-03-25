@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 function ForgotPassword() {
   return (
-    <div className="card shadow-sm">
+    <div className="card shadow-sm gf-auth-card">
       <div className="card-body">
         <h3 className="card-title mb-4 text-center">Forgot Password?</h3>
         <p className="text-muted small mb-3">

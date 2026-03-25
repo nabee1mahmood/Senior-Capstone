@@ -14,8 +14,8 @@ function DayDetails() {
   ];
 
   return (
-    <div className="container mt-4">
-      <h2>Details for {day}</h2>
+    <div className="container mt-4 gf-page">
+      <h2 className="gf-dashboard-title">Details for {day}</h2>
       <p>Here you can see all logged sensor data for {day}.</p>
 
       <table className="table table-striped mt-3">

@@ -16,11 +16,10 @@ function AppLayout() {
 
   return (
     <div
-      className={`d-flex bg-light w-100 ${isDashboard ? 'align-items-start' : 'justify-content-center align-items-center'}`}
-      style={{ minHeight: '100vh', padding: 16 }}
+      className={`app-shell d-flex w-100 ${isDashboard ? 'app-shell--dashboard align-items-start' : 'app-shell--auth justify-content-center align-items-center'}`}
     >
       <div
-        className="w-100"
+        className="w-100 app-shell__inner"
         style={{ maxWidth: isDashboard ? 'none' : 400 }}
       >
         <Routes>

@@ -1,11 +1,24 @@
 import 'dotenv/config'
+
 import express from 'express'
+import axios from 'axios'
 import cors from 'cors'
 
+
+
 const app = express()
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 8080
+
+console.log(app)
+
+app.listen(8080, () => {
+      console.log('server listening on port 8080')
+})
+
+
 
 // Allow your React app (running on a different port) to call this API
+
 app.use(cors())
 app.use(express.json())
 

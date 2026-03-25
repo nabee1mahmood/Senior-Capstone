@@ -46,7 +46,7 @@ function CreateAccount() {
   }
 
   return (
-    <div className="card shadow-sm">
+    <div className="card shadow-sm gf-auth-card">
       <div className="card-body">
         <h3 className="card-title mb-4 text-center">Create account</h3>
 
