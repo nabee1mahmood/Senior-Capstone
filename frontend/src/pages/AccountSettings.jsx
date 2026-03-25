@@ -3,9 +3,9 @@ import './AccountSettings.css'
 
 function AccountSettings() {
   return (
-    <div className="dashboard">
+    <div className="dashboard gf-dashboard light">
       <header className="dashboard-header d-flex justify-content-between align-items-center mb-4">
-        <h1 className="h4 mb-0 font-weight-bold">Account Settings</h1>
+        <h1 className="h4 mb-0 font-weight-bold gf-dashboard-title-alt">Account Settings</h1>
         <div className="d-flex gap-2">
           <Link to="/home" className="btn btn-outline-secondary btn-sm">
             Back To Dashboard

@@ -47,7 +47,7 @@ function AppLayout() {
       style={{ minHeight: '100vh', padding: 16 }}
     >
       <div
-        className="w-100"
+        className="w-100 app-shell__inner"
         style={{ maxWidth: isDashboard ? 'none' : 400 }}
       >
         <Routes>
