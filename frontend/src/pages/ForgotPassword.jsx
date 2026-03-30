@@ -1,7 +1,17 @@
 import { Link } from 'react-router-dom'
 
-function ForgotPassword() {
+function ForgotPassword({ darkMode, setDarkMode }) {
   return (
+    <div className="w-100" style={{ maxWidth: 400 }}>
+      <div className="d-flex justify-content-end mb-2">
+        <button
+          type="button"
+          className="btn btn-sm btn-outline-secondary"
+          onClick={() => setDarkMode(!darkMode)}
+        >
+          {darkMode ? 'Light mode' : 'Dark mode'}
+        </button>
+      </div>
     <div className="card shadow-sm gf-auth-card">
       <div className="card-body">
         <h3 className="card-title mb-4 text-center">Forgot Password?</h3>
@@ -34,6 +44,7 @@ function ForgotPassword() {
           <Link to="/">Back to Login</Link>
         </p>
       </div>
+    </div>
     </div>
   );
 }

@@ -1,54 +1,29 @@
-/* DayDetails.css */
+/* Day details — typography & table; colors come from theme tokens (body + Home.css) */
+
 .day-details {
-  color: #111827; /* default text for light mode */
-}
-
-body.dark .day-details {
-  color: #f9fafb; /* text in dark mode */
-}
-
-/* Table adjustments */
-.dd-table {
-  background-color: #ffffff; /* light mode table */
-}
-
-body.dark .dd-table {
-  background-color: #1e1e1e; /* dark mode table */
-  color: #f9fafb;
-}
-
-body.dark .dd-table th,
-body.dark .dd-table td {
-  border-color: #333;
-}
-
-body.dark .table-striped tbody tr:nth-of-type(odd) {
-  background-color: #2a2a2a;
-}
-
-body.dark .table-striped tbody tr:nth-of-type(even) {
-  background-color: #1e1e1e;
-}
-
-/* Header and subtitle */
-.dd-header {
-  font-weight: 600;
+  color: var(--theme-text);
 }
 
 .dd-subtitle {
-  color: #6b7280; /* gray text in light mode */
+  color: var(--theme-text-muted);
 }
 
-body.dark .dd-subtitle {
-  color: #bbbbbb; /* muted text in dark mode */
+.dd-table {
+  background-color: var(--theme-surface);
+  color: var(--theme-text);
 }
 
-/* Buttons */
-body.dark .btn-primary {
-  background-color: #22c55e;
-  border-color: #16a34a;
+.dd-table th,
+.dd-table td {
+  border-color: var(--theme-border);
 }
 
-body.dark .btn-primary:hover {
-  filter: brightness(1.1);
+.dashboard.dark .table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.12);
 }
+
+.dashboard.dark .table-striped tbody tr:nth-of-type(even) {
+  background-color: var(--theme-surface);
+}
+
+/* Primary buttons stay Bootstrap blue in dark mode */

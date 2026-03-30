@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { createAccount } from '../api'
 
-function CreateAccount() {
+function CreateAccount({ darkMode, setDarkMode }) {
   const navigate = useNavigate()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -46,6 +46,16 @@ function CreateAccount() {
   }
 
   return (
+    <div className="w-100" style={{ maxWidth: 400 }}>
+      <div className="d-flex justify-content-end mb-2">
+        <button
+          type="button"
+          className="btn btn-sm btn-outline-secondary"
+          onClick={() => setDarkMode(!darkMode)}
+        >
+          {darkMode ? 'Light mode' : 'Dark mode'}
+        </button>
+      </div>
     <div className="card shadow-sm gf-auth-card">
       <div className="card-body">
         <h3 className="card-title mb-4 text-center">Create account</h3>
@@ -110,6 +120,7 @@ function CreateAccount() {
           Already have an account? <Link to="/">Log in</Link>
         </p>
       </div>
+    </div>
     </div>
   )
 }

@@ -37,9 +37,7 @@ function AppLayout() {
 
   return (
     <div
-      className={`d-flex w-100 ${
-        darkMode ? 'bg-dark text-light' : 'bg-light'
-      } ${
+      className={`theme-shell d-flex w-100 ${
         isDashboard
           ? 'align-items-start'
           : 'justify-content-center align-items-center'

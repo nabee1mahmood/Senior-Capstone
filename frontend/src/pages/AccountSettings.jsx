@@ -1,12 +1,19 @@
 import { Link } from 'react-router-dom'
-import './AccountSettings.css'
+import './Home.css'
 
-function AccountSettings() {
+function AccountSettings({ darkMode, setDarkMode }) {
   return (
-    <div className="dashboard gf-dashboard light">
-      <header className="dashboard-header d-flex justify-content-between align-items-center mb-4">
+    <div className={`dashboard gf-dashboard ${darkMode ? 'dark' : 'light'}`}>
+      <header className="dashboard-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h1 className="h4 mb-0 font-weight-bold gf-dashboard-title-alt">Account Settings</h1>
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 align-items-center">
+          <button
+            type="button"
+            className="btn btn-outline-secondary btn-sm"
+            onClick={() => setDarkMode(!darkMode)}
+          >
+            {darkMode ? 'Light Mode' : 'Dark Mode'}
+          </button>
           <Link to="/home" className="btn btn-outline-secondary btn-sm">
             Back To Dashboard
           </Link>
@@ -18,7 +25,7 @@ function AccountSettings() {
 
       <section className="row">
         <div className="col-lg-8 mb-4">
-          <div className="card shadow-sm h-100 custom-card">
+          <div className="card shadow-sm h-100">
             <div className="card-header font-weight-medium">Profile Information</div>
 
             <div className="card-body">
@@ -33,7 +40,7 @@ function AccountSettings() {
                     <label htmlFor="firstName">First Name</label>
                     <input
                       type="text"
-                      className="form-control custom-input"
+                      className="form-control"
                       id="firstName"
                       placeholder="Enter first name"
                       defaultValue="Paul"
@@ -44,7 +51,7 @@ function AccountSettings() {
                     <label htmlFor="lastName">Last Name</label>
                     <input
                       type="text"
-                      className="form-control custom-input"
+                      className="form-control"
                       id="lastName"
                       placeholder="Enter last name"
                       defaultValue="Mahmood"
@@ -56,7 +63,7 @@ function AccountSettings() {
                   <label htmlFor="emailAddress">Email Address</label>
                   <input
                     type="email"
-                    className="form-control custom-input"
+                    className="form-control"
                     id="emailAddress"
                     placeholder="Enter email"
                     defaultValue="pmahmo00@email.com"
@@ -67,7 +74,7 @@ function AccountSettings() {
                   <label htmlFor="phoneNumber">Phone Number</label>
                   <input
                     type="tel"
-                    className="form-control custom-input"
+                    className="form-control"
                     id="phoneNumber"
                     placeholder="Enter phone number"
                     defaultValue="(420) 069-1337"
@@ -83,7 +90,7 @@ function AccountSettings() {
         </div>
 
         <div className="col-lg-4 mb-4">
-          <div className="card shadow-sm h-100 custom-card">
+          <div className="card shadow-sm h-100">
             <div className="card-header font-weight-medium">Account Summary</div>
 
             <div className="card-body">
@@ -102,7 +109,7 @@ function AccountSettings() {
 
       <section className="row">
         <div className="col-md-6 mb-4">
-          <div className="card shadow-sm h-100 custom-card">
+          <div className="card shadow-sm h-100">
             <div className="card-header font-weight-medium">Change Password</div>
 
             <div className="card-body">
@@ -116,7 +123,7 @@ function AccountSettings() {
                   <label htmlFor="currentPassword">Current Password</label>
                   <input
                     type="password"
-                    className="form-control custom-input"
+                    className="form-control"
                     id="currentPassword"
                     placeholder="Enter current password"
                   />
@@ -126,7 +133,7 @@ function AccountSettings() {
                   <label htmlFor="newPassword">New Password</label>
                   <input
                     type="password"
-                    className="form-control custom-input"
+                    className="form-control"
                     id="newPassword"
                     placeholder="Enter new password"
                   />
@@ -136,7 +143,7 @@ function AccountSettings() {
                   <label htmlFor="confirmNewPassword">Confirm New Password</label>
                   <input
                     type="password"
-                    className="form-control custom-input"
+                    className="form-control"
                     id="confirmNewPassword"
                     placeholder="Confirm new password"
                   />
@@ -151,7 +158,7 @@ function AccountSettings() {
         </div>
 
         <div className="col-md-6 mb-4">
-          <div className="card shadow-sm h-100 custom-card">
+          <div className="card shadow-sm h-100">
             <div className="card-header font-weight-medium">Preferences</div>
 
             <div className="card-body">
@@ -161,37 +168,37 @@ function AccountSettings() {
                   alert('Preferences saved (demo)')
                 }}
               >
-                <div className="form-check form-switch mb-3">
+                <div className="custom-control custom-switch mb-3">
                   <input
                     type="checkbox"
-                    className="form-check-input"
+                    className="custom-control-input"
                     id="emailAlerts"
                     defaultChecked
                   />
-                  <label className="form-check-label" htmlFor="emailAlerts">
+                  <label className="custom-control-label" htmlFor="emailAlerts">
                     Email Alerts
                   </label>
                 </div>
 
-                <div className="form-check form-switch mb-3">
+                <div className="custom-control custom-switch mb-3">
                   <input
                     type="checkbox"
-                    className="form-check-input"
+                    className="custom-control-input"
                     id="smsAlerts"
                   />
-                  <label className="form-check-label" htmlFor="smsAlerts">
+                  <label className="custom-control-label" htmlFor="smsAlerts">
                     SMS Notifications
                   </label>
                 </div>
 
-                <div className="form-check form-switch mb-4">
+                <div className="custom-control custom-switch mb-4">
                   <input
                     type="checkbox"
-                    className="form-check-input"
+                    className="custom-control-input"
                     id="weeklyReports"
                     defaultChecked
                   />
-                  <label className="form-check-label" htmlFor="weeklyReports">
+                  <label className="custom-control-label" htmlFor="weeklyReports">
                     Weekly Reports
                   </label>
                 </div>
@@ -206,7 +213,7 @@ function AccountSettings() {
       </section>
 
       <section>
-        <div className="card shadow-sm border-danger custom-card">
+        <div className="card shadow-sm border-danger">
           <div className="card-header font-weight-medium text-danger">Danger Zone</div>
 
           <div className="card-body d-flex flex-column flex-md-row justify-content-between align-items-md-center">

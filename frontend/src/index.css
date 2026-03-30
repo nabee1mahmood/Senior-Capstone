@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-/* Normal website — light page, full viewport */
+/* Normal website — full viewport; theme tokens switch on body.light / body.dark */
 :root {
   --page-bg: #ffffff;
   --page-bg-muted: #f8f9fa;
@@ -16,6 +16,15 @@
   --gf-shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
   --gf-ease: cubic-bezier(0.4, 0, 0.2, 1);
   --gf-link: #0d6efd;
+  /* Shared with dashboards & auth cards (overridden on body) */
+  --theme-bg: #f8f9fa;
+  --theme-surface: #ffffff;
+  --theme-surface-muted: #f8f9fa;
+  --theme-border: #dee2e6;
+  --theme-text: #212529;
+  --theme-text-muted: #6c757d;
+  --theme-input-bg: #ffffff;
+  --theme-input-border: #ced4da;
 }
 
 html,
@@ -73,11 +82,17 @@ body {
   max-width: 100%;
 }
 
-/* Auth cards — plain white card like a typical site */
+/* App route shell — matches body so Bootstrap bg-dark/bg-light isn’t needed */
+.theme-shell {
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+/* Auth cards — follow theme tokens */
 .gf-auth-card {
-  border: 1px solid var(--gf-border) !important;
+  border: 1px solid var(--theme-border) !important;
   border-radius: var(--gf-radius) !important;
-  background: var(--page-bg) !important;
+  background: var(--theme-surface) !important;
   box-shadow: var(--gf-shadow-lg) !important;
   animation: gf-fade-in-up 0.45s var(--gf-ease) both;
 }
@@ -94,19 +109,19 @@ body {
 }
 
 .gf-auth-card .card-body {
-  color: var(--gf-text);
+  color: var(--theme-text);
 }
 
 .gf-auth-card label {
-  color: var(--gf-text-muted);
+  color: var(--theme-text-muted);
   font-size: 0.875rem;
   font-weight: 500;
 }
 
 .gf-auth-card .form-control {
-  background: var(--page-bg);
-  border: 1px solid var(--gf-border);
-  color: var(--gf-text);
+  background: var(--theme-input-bg);
+  border: 1px solid var(--theme-input-border);
+  color: var(--theme-text);
   border-radius: 0.375rem;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -114,7 +129,7 @@ body {
 .gf-auth-card .form-control:focus {
   border-color: #86b7fe;
   box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-  color: var(--gf-text);
+  color: var(--theme-text);
 }
 
 .gf-auth-card .form-control::placeholder {
@@ -129,11 +144,11 @@ body {
 }
 
 .gf-auth-card .text-muted {
-  color: var(--gf-text-muted) !important;
+  color: var(--theme-text-muted) !important;
 }
 
 .gf-auth-card .bi {
-  color: var(--gf-text-muted) !important;
+  color: var(--theme-text-muted) !important;
   transition: color 0.2s;
 }
 
@@ -162,7 +177,7 @@ body {
 
 .gf-auth-card h5,
 .gf-auth-card .card-title {
-  color: var(--gf-text) !important;
+  color: var(--theme-text) !important;
   font-weight: 700;
   background: none !important;
   -webkit-background-clip: unset !important;
@@ -212,12 +227,12 @@ body {
   background: var(--page-bg-muted);
 }
 
-/* Account settings title */
-.dashboard.gf-dashboard.light .gf-dashboard-title-alt {
+/* Account settings page title (same as dashboard title) */
+.dashboard.gf-dashboard .gf-dashboard-title-alt {
   background: none;
   -webkit-background-clip: unset;
   background-clip: unset;
-  color: var(--gf-text);
+  color: var(--theme-text);
 }
 
 /* Legacy layout helpers */
@@ -402,27 +417,64 @@ body.dark .field input {
   padding-top: 0.25rem;
 }
 
+/* Single source of truth for light / dark (matches Home dashboard palette) */
 body.light {
-  background-color: #f8f9fa;
-  color: #212529;
+  --page-bg: #f8f9fa;
+  --page-bg-muted: #f1f3f5;
+  --gf-text: #212529;
+  --gf-text-muted: #6c757d;
+  --gf-border: #dee2e6;
+  --theme-bg: #f8f9fa;
+  --theme-surface: #ffffff;
+  --theme-surface-muted: #f8f9fa;
+  --theme-border: #dee2e6;
+  --theme-text: #212529;
+  --theme-text-muted: #6c757d;
+  --theme-input-bg: #ffffff;
+  --theme-input-border: #ced4da;
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
 }
 
 body.dark {
-  background-color: #121212;
-  color: #ffffff;
-}
-
-body.dark .card {
-  background-color: #1e1e1e;
-  color: #ffffff;
-  border-color: #333;
-}
-
-body.dark .card-header {
-  background-color: #2a2a2a;
-  border-bottom: 1px solid #444;
+  --page-bg: #343a40;
+  --page-bg-muted: #3d4449;
+  --gf-text: #f8f9fa;
+  --gf-text-muted: #ced4da;
+  --gf-border: rgba(255, 255, 255, 0.12);
+  --theme-bg: #343a40;
+  --theme-surface: #495057;
+  --theme-surface-muted: rgba(0, 0, 0, 0.2);
+  --theme-border: rgba(255, 255, 255, 0.12);
+  --theme-text: #f8f9fa;
+  --theme-text-muted: #ced4da;
+  --theme-input-bg: #3d454d;
+  --theme-input-border: rgba(255, 255, 255, 0.2);
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
 }
 
 body.dark .text-muted {
-  color: #bbbbbb !important;
+  color: var(--theme-text-muted) !important;
+}
+
+/* Switches / checks — primary blue in dark mode (same as buttons) */
+body.dark .form-check-input:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+body.dark .form-check-label {
+  color: var(--theme-text);
+}
+
+body.dark .gf-auth-card .btn-outline-secondary {
+  color: var(--theme-text);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+body.dark .gf-auth-card .btn-outline-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--theme-text);
 }
