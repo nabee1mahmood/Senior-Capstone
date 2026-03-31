@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api";
 
-function Login({ darkMode, setDarkMode }) {
+function Login() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,16 +32,6 @@ function Login({ darkMode, setDarkMode }) {
   }
 
   return (
-    <div className="w-100" style={{ maxWidth: 400 }}>
-      <div className="d-flex justify-content-end mb-2">
-        <button
-          type="button"
-          className="btn btn-sm btn-outline-secondary"
-          onClick={() => setDarkMode(!darkMode)}
-        >
-          {darkMode ? "Light mode" : "Dark mode"}
-        </button>
-      </div>
     <div className="card shadow-sm gf-auth-card">
       <div className="card-body">
         <div className="text-center mb-3">
@@ -123,7 +113,6 @@ function Login({ darkMode, setDarkMode }) {
           </Link>
         </div>
       </div>
-    </div>
     </div>
   );
 }

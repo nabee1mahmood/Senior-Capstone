@@ -49,10 +49,7 @@ function AppLayout() {
         style={{ maxWidth: isDashboard ? 'none' : 400 }}
       >
         <Routes>
-          <Route
-            path="/"
-            element={<Login darkMode={darkMode} setDarkMode={setDarkMode} />}
-          />
+          <Route path="/" element={<Login />} />
           <Route
             path="/create-account"
             element={<CreateAccount darkMode={darkMode} setDarkMode={setDarkMode} />}
