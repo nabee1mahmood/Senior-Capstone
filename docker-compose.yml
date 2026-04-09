@@ -9,7 +9,6 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-    
 
   adminer:
     image: adminer
@@ -28,6 +27,29 @@ services:
       PORT: 3001
     depends_on:
       - db
+
+  simulator:
+    build: ./backend/simulator
+    ports:
+      - "8000:8000"
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - simulator
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
 
   frontend:
     build:
