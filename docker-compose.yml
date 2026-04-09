@@ -48,6 +48,9 @@ services:
       - "3002:3000"
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ALLOW_EMBEDDING=true
     depends_on:
       - prometheus
 
@@ -64,3 +67,4 @@ services:
 
 volumes:
   pgdata:
+  grafana_data:

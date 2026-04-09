@@ -7,6 +7,7 @@ import AccountSettings from './pages/AccountSettings'
 import ForgotPassword from './pages/ForgotPassword'
 import Home from './pages/Home'
 import DayDetails from './pages/DayDetails'
+import GrafanaDashboard from './pages/GrafanaDashboard'
 
 import './index.css'
 
@@ -70,6 +71,7 @@ function AppLayout() {
             path="/day/:day"
             element={<DayDetails darkMode={darkMode} setDarkMode={setDarkMode} />}
           />
+          <Route path="/grafana" element={<GrafanaDashboard />} />
         </Routes>
       </div>
     </div>

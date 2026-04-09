@@ -68,6 +68,10 @@ function Home({ darkMode, setDarkMode }) {
                   {darkMode ? "Light Mode" : "Dark Mode"}
                 </button>
 
+                <Link to="/grafana" className="btn btn-primary btn-sm ml-2">
+                  View Graphs
+                </Link>
+
                 <Link to="/account-settings" className="list-group-item list-group-item-action">
                   Account Settings
                 </Link>
