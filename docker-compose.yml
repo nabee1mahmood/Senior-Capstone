@@ -1,15 +1,23 @@
 services:
   db:
-    image: postgres:latest
+    # Pin major version: postgres:latest is 18+ and rejects the old /var/lib/postgresql/data-only mount layout.
+    image: postgres:16-alpine
     restart: always
     environment:
       POSTGRES_DB: mydatabase
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d mydatabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 45s
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-    
+    ports:
+      - "5432:5432"
 
   adminer:
     image: adminer
@@ -26,8 +34,10 @@ services:
       - "3001:3001"
     environment:
       PORT: 3001
+      DATABASE_URL: postgresql://user:password@db:5432/mydatabase
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   frontend:
     build:

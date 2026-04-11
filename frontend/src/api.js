@@ -31,3 +31,25 @@ export async function createAccount(email, password) {
     body: JSON.stringify({ email, password }),
   })
 }
+
+export async function fetchDeviceOverview(userId) {
+  return request(`/api/users/${userId}/devices/overview`)
+}
+
+export async function fetchProfile(userId) {
+  return request(`/api/users/${userId}/profile`)
+}
+
+export async function patchProfile(userId, body) {
+  return request(`/api/users/${userId}/profile`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  })
+}
+
+export async function patchPassword(userId, body) {
+  return request(`/api/users/${userId}/password`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  })
+}

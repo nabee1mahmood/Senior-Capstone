@@ -20,6 +20,7 @@ function Login() {
     try {
       const data = await login(email, password);
       if (data.success) {
+        localStorage.setItem("homesense_user", JSON.stringify(data.user));
         navigate("/home");
         return;
       }
