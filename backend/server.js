@@ -368,9 +368,15 @@ app.post("/api/readings", async (req, res) => {
   }
 })
 
+<<<<<<< HEAD
+=======
+
+// 404
+>>>>>>> 429db40 (WIP: saving local changes)
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" })
 })
+
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`API running on http://localhost:${PORT}`)
