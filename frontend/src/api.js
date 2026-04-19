@@ -1,8 +1,8 @@
 /**
  * API client for the backend.
- * In Docker, set VITE_API_URL at build time if the API has a different URL.
+ * Set VITE_API_URL for production or non-default backend locations.
  */
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '')
 
 async function request(path, options = {}) {
   const url = `${API_BASE}${path}`
@@ -34,6 +34,14 @@ export async function createAccount(email, password) {
 
 export async function fetchDeviceOverview(userId) {
   return request(`/api/users/${userId}/devices/overview`)
+}
+
+export async function fetchAlertHistory(userId, limit = 25) {
+  return request(`/api/users/${userId}/alerts?limit=${limit}`)
+}
+
+export async function fetchDeviceReadings(userId, deviceId, limit = 60) {
+  return request(`/api/users/${userId}/devices/${deviceId}/readings?limit=${limit}`)
 }
 
 export async function fetchProfile(userId) {

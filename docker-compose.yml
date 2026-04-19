@@ -39,6 +39,18 @@ services:
       db:
         condition: service_healthy
 
+  fake_data:
+    build: ./backend
+    restart: always
+    command: npm run fake-readings
+    environment:
+      API_BASE_URL: http://backend:3001
+      FAKE_INTERVAL_MS: 10000
+      DATABASE_URL: postgresql://user:password@db:5432/mydatabase
+    depends_on:
+      backend:
+        condition: service_started
+
   frontend:
     build:
       context: ./frontend

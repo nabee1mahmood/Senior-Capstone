@@ -15,6 +15,12 @@ app.use(express.json())
 
 /** Latest reading per device id (in-memory until you persist synthetic data). */
 const liveReadingByDeviceId = new Map()
+/** Recent reading history per device id for graph/detail page. */
+const readingHistoryByDeviceId = new Map()
+/** Alert history by user id for dashboard timeline. */
+const alertHistoryByUserId = new Map()
+const MAX_HISTORY_POINTS = 120
+const MAX_ALERT_HISTORY = 200
 
 const defaultReadingByUid = {
   "dev-attic-01": { value: 58.2, sensor_type: "humidity", unit: "% RH" },
@@ -40,6 +46,86 @@ function unitFromSensorType(sensorType, explicitUnit) {
 
 function uidLabel(deviceUid) {
   return deviceUid.replaceAll("-", " ")
+}
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value))
+}
+
+function evaluateAlert(sensorType, value, unit) {
+  const type = (sensorType || "").toLowerCase()
+  if (typeof value !== "number" || Number.isNaN(value)) return null
+
+  if (type === "temperature") {
+    const isF = String(unit || "").toLowerCase().includes("f")
+    const threshold = isF ? 86 : 30
+    if (value >= threshold) {
+      return {
+        kind: "threshold",
+        level: "warning",
+        message: `Temperature threshold reached (${value}${isF ? "°F" : "°C"} >= ${threshold}${isF ? "°F" : "°C"})`
+      }
+    }
+  }
+
+  if (type === "vibration" && value >= 1) {
+    return {
+      kind: "event",
+      level: "critical",
+      message: "Vibration detected"
+    }
+  }
+
+  return null
+}
+
+function pushHistory(deviceId, reading) {
+  const history = readingHistoryByDeviceId.get(deviceId) || []
+  history.push(reading)
+  if (history.length > MAX_HISTORY_POINTS) {
+    history.splice(0, history.length - MAX_HISTORY_POINTS)
+  }
+  readingHistoryByDeviceId.set(deviceId, history)
+}
+
+function pushAlert(userId, alertEvent) {
+  const history = alertHistoryByUserId.get(userId) || []
+  const previous = history[history.length - 1]
+  // Avoid flooding duplicates for the same device + same alert message.
+  if (
+    previous &&
+    previous.device_id === alertEvent.device_id &&
+    previous.message === alertEvent.message
+  ) {
+    return
+  }
+  history.push(alertEvent)
+  if (history.length > MAX_ALERT_HISTORY) {
+    history.splice(0, history.length - MAX_ALERT_HISTORY)
+  }
+  alertHistoryByUserId.set(userId, history)
+}
+
+function maybeSeedHistory(deviceId, deviceUid) {
+  const existing = readingHistoryByDeviceId.get(deviceId)
+  if (existing && existing.length > 0) return
+
+  const fallback = defaultReadingByUid[deviceUid]
+  if (!fallback || typeof fallback.value !== "number") return
+
+  const now = Date.now()
+  const seeded = []
+  for (let i = 29; i >= 0; i -= 1) {
+    const jitterPct = (Math.random() - 0.5) * 0.12
+    const value = Number.parseFloat((fallback.value * (1 + jitterPct)).toFixed(2))
+    seeded.push({
+      value: clamp(value, 0, Number.MAX_SAFE_INTEGER),
+      sensor_type: fallback.sensor_type,
+      unit: unitFromSensorType(fallback.sensor_type, fallback.unit),
+      recorded_at: new Date(now - i * 2 * 60 * 1000).toISOString()
+    })
+  }
+  readingHistoryByDeviceId.set(deviceId, seeded)
 }
 
 app.get("/api/health", async (req, res) => {
@@ -309,13 +395,16 @@ app.get("/api/users/:userId/devices/overview", async (req, res) => {
       }
       const source = live || fallback
       const unit = unitFromSensorType(source.sensor_type, source.unit)
+      const alert = evaluateAlert(source.sensor_type, source.value, unit)
       return {
         id: row.id,
         device_uid: row.device_uid,
         label: uidLabel(row.device_uid),
         reading: source.value,
         sensor_type: source.sensor_type,
-        unit
+        unit,
+        recorded_at: source.recorded_at || null,
+        alert
       }
     })
 
@@ -323,6 +412,30 @@ app.get("/api/users/:userId/devices/overview", async (req, res) => {
   } catch (err) {
     console.error(err)
     return res.status(500).json({ message: "Could not load device overview" })
+  }
+})
+
+/**
+ * Alert history for this user (most recent first).
+ */
+app.get("/api/users/:userId/alerts", async (req, res) => {
+  if (!pool) {
+    return res.status(500).json({ message: "Database not configured" })
+  }
+
+  const userId = Number.parseInt(req.params.userId, 10)
+  const limitRaw = Number.parseInt(req.query.limit, 10)
+  const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(limitRaw, 1), 100) : 25
+  if (!Number.isFinite(userId)) {
+    return res.status(400).json({ message: "Invalid user id" })
+  }
+
+  try {
+    const alerts = (alertHistoryByUserId.get(userId) || []).slice(-limit).reverse()
+    return res.json({ alerts })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({ message: "Could not load alert history" })
   }
 })
 
@@ -346,7 +459,7 @@ app.post("/api/readings", async (req, res) => {
 
   try {
     const { rows } = await query(
-      "SELECT id FROM devices WHERE device_uid = $1 LIMIT 1",
+      "SELECT id, user_id FROM devices WHERE device_uid = $1 LIMIT 1",
       [deviceUid]
     )
     if (rows.length === 0) {
@@ -354,25 +467,123 @@ app.post("/api/readings", async (req, res) => {
     }
 
     const deviceId = rows[0].id
+    const userId = rows[0].user_id
     const st = sensorType || "custom"
+    const resolvedUnit =
+      typeof unitOverride === "string" ? unitOverride : unitFromSensorType(st, "")
+    const recordedAt = new Date().toISOString()
     liveReadingByDeviceId.set(deviceId, {
       value,
       sensor_type: st,
-      unit: typeof unitOverride === "string" ? unitOverride : unitFromSensorType(st, "")
+      unit: resolvedUnit,
+      recorded_at: recordedAt
     })
+    pushHistory(deviceId, {
+      value,
+      sensor_type: st,
+      unit: resolvedUnit,
+      recorded_at: recordedAt
+    })
+    const alert = evaluateAlert(st, value, resolvedUnit)
+    if (alert) {
+      pushAlert(userId, {
+        device_id: deviceId,
+        device_uid: deviceUid,
+        label: uidLabel(deviceUid),
+        sensor_type: st,
+        value,
+        unit: resolvedUnit,
+        level: alert.level,
+        kind: alert.kind,
+        message: alert.message,
+        recorded_at: recordedAt
+      })
+    }
 
-    return res.json({ ok: true, device_id: deviceId })
+    return res.json({ ok: true, device_id: deviceId, alert })
   } catch (err) {
     console.error(err)
     return res.status(500).json({ message: "Could not record reading" })
   }
 })
 
-<<<<<<< HEAD
-=======
+/**
+ * Detailed device readings for charts/table drill-down.
+ */
+app.get("/api/users/:userId/devices/:deviceId/readings", async (req, res) => {
+  if (!pool) {
+    return res.status(500).json({ message: "Database not configured" })
+  }
+
+  const userId = Number.parseInt(req.params.userId, 10)
+  const deviceId = Number.parseInt(req.params.deviceId, 10)
+  const limitRaw = Number.parseInt(req.query.limit, 10)
+  const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(limitRaw, 10), MAX_HISTORY_POINTS) : 60
+  if (!Number.isFinite(userId) || !Number.isFinite(deviceId)) {
+    return res.status(400).json({ message: "Invalid user id or device id" })
+  }
+
+  try {
+    const { rows } = await query(
+      `SELECT id, name, device_uid
+       FROM devices
+       WHERE id = $1 AND user_id = $2
+       LIMIT 1`,
+      [deviceId, userId]
+    )
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Device not found for user" })
+    }
+
+    const device = rows[0]
+    maybeSeedHistory(device.id, device.device_uid)
+
+    const allHistory = readingHistoryByDeviceId.get(device.id) || []
+    const readings = allHistory.slice(-limit)
+    const values = readings.map((r) => r.value).filter((v) => typeof v === "number")
+    const latest = readings[readings.length - 1] || null
+    const latestUnit = latest?.unit || unitFromSensorType(latest?.sensor_type, "") || ""
+    const alert = latest
+      ? evaluateAlert(latest.sensor_type, latest.value, latestUnit)
+      : null
+    const recentAlerts = (alertHistoryByUserId.get(userId) || [])
+      .filter((entry) => entry.device_id === device.id)
+      .slice(-10)
+      .reverse()
+
+    const stats =
+      values.length > 0
+        ? {
+            min: Number.parseFloat(Math.min(...values).toFixed(2)),
+            max: Number.parseFloat(Math.max(...values).toFixed(2)),
+            avg: Number.parseFloat((values.reduce((a, b) => a + b, 0) / values.length).toFixed(2)),
+            count: values.length
+          }
+        : { min: null, max: null, avg: null, count: 0 }
+
+    return res.json({
+      device: {
+        id: device.id,
+        name: device.name,
+        device_uid: device.device_uid,
+        label: uidLabel(device.device_uid),
+        sensor_type: latest?.sensor_type || null,
+        unit: latestUnit,
+        latest_value: latest?.value ?? null,
+        latest_recorded_at: latest?.recorded_at || null,
+        alert
+      },
+      stats,
+      readings,
+      alerts: recentAlerts
+    })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({ message: "Could not load device readings" })
+  }
+})
 
 // 404
->>>>>>> 429db40 (WIP: saving local changes)
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" })
 })

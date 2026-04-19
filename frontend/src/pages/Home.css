@@ -134,6 +134,18 @@
   background-color: var(--page-bg-muted);
 }
 
+.gf-device-row {
+  transition: background-color 0.15s ease;
+}
+
+.gf-device-row:hover {
+  background-color: var(--theme-surface-muted);
+}
+
+.gf-summary-card {
+  border-left: 4px solid #0d6efd;
+}
+
 .dashboard .d-flex.align-items-end[style*='height: 160'] > div,
 .dashboard .d-flex.align-items-end[style*='height: 100%'] > div {
   transition: filter 0.2s, transform 0.2s;

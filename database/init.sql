@@ -48,6 +48,7 @@ VALUES (
     'Test',
     'User'
 )
+
 ON CONFLICT (email) DO NOTHING;
 
 UPDATE users
