@@ -20,12 +20,12 @@ function CreateAccount({ darkMode, setDarkMode }) {
 
 
     if (password !== confirmPassword) {
-      setError('Passwords does not match')
+      setError('Passwords do not match')
       setLoading(false)
       return
     }
 
-    if (password.length <= 8) {
+    if (password.length < 8) {
       setError('Password must be at least 8 characters')
       setLoading(false)
       return

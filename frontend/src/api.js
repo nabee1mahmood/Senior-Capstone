@@ -1,11 +1,16 @@
 /**
  * API client for the backend.
- * Set VITE_API_URL for production or non-default backend locations.
+ * - Docker (nginx): leave VITE_API_URL unset → same-origin `/api/...` (nginx proxies to backend).
+ * - `npm run dev`: Vite proxies `/api` to the backend; optional `.env` VITE_API_URL=http://localhost:3001
  */
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '')
+const rawBase = import.meta.env.VITE_API_URL
+const API_BASE =
+  rawBase !== undefined && rawBase !== null && String(rawBase).trim() !== ''
+    ? String(rawBase).replace(/\/$/, '')
+    : ''
 
 async function request(path, options = {}) {
-  const url = `${API_BASE}${path}`
+  const url = API_BASE ? `${API_BASE}${path}` : path
   const res = await fetch(url, {
     headers: { 'Content-Type': 'application/json', ...options.headers },
     ...options,
@@ -59,5 +64,12 @@ export async function patchPassword(userId, body) {
   return request(`/api/users/${userId}/password`, {
     method: 'PATCH',
     body: JSON.stringify(body),
+  })
+}
+
+export async function deleteAccount(userId, password) {
+  return request(`/api/users/${userId}`, {
+    method: 'DELETE',
+    body: JSON.stringify({ password }),
   })
 }

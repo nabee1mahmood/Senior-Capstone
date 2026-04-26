@@ -1,6 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
-import { fetchProfile, patchProfile, patchPassword, fetchDeviceOverview } from '../api'
+import {
+  fetchProfile,
+  patchProfile,
+  patchPassword,
+  fetchDeviceOverview,
+  deleteAccount,
+} from '../api'
 import './Home.css'
 
 function formatLastLogin(iso) {
@@ -15,8 +21,7 @@ function AccountSettings({ darkMode, setDarkMode }) {
   const [userId, setUserId] = useState(null)
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
+  const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [profileMessage, setProfileMessage] = useState('')
@@ -32,6 +37,11 @@ function AccountSettings({ darkMode, setDarkMode }) {
   const [passwordError, setPasswordError] = useState('')
   const [savingPassword, setSavingPassword] = useState(false)
 
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deletePassword, setDeletePassword] = useState('')
+  const [deleteError, setDeleteError] = useState('')
+  const [deleting, setDeleting] = useState(false)
+
   const load = useCallback(async (id) => {
     setLoadError('')
     setLoading(true)
@@ -41,12 +51,27 @@ function AccountSettings({ darkMode, setDarkMode }) {
         fetchDeviceOverview(id).catch(() => ({ devices: [] })),
       ])
       const p = profileRes.profile
-      setFirstName(p.first_name || '')
-      setLastName(p.last_name || '')
+      setDisplayName(p.display_name || '')
       setEmail(p.email || '')
       setPhone(p.phone || '')
       setLastLoginAt(p.last_login_at || null)
       setDeviceCount(Array.isArray(overviewRes.devices) ? overviewRes.devices.length : 0)
+      try {
+        const stored = JSON.parse(localStorage.getItem('homesense_user') || '{}')
+        if (stored.id === id) {
+          localStorage.setItem(
+            'homesense_user',
+            JSON.stringify({
+              ...stored,
+              id: p.id,
+              email: p.email,
+              display_name: p.display_name ?? null,
+            })
+          )
+        }
+      } catch {
+        /* ignore */
+      }
     } catch (err) {
       setLoadError(err.message || 'Could not load account')
     } finally {
@@ -85,21 +110,24 @@ function AccountSettings({ darkMode, setDarkMode }) {
     setSavingProfile(true)
     try {
       const data = await patchProfile(userId, {
-        first_name: firstName,
-        last_name: lastName,
+        display_name: displayName.trim() || null,
         email: email.trim().toLowerCase(),
         phone,
       })
       const p = data.profile
       setEmail(p.email)
-      setFirstName(p.first_name || '')
-      setLastName(p.last_name || '')
+      setDisplayName(p.display_name || '')
       setPhone(p.phone || '')
       setLastLoginAt(p.last_login_at || null)
       const stored = JSON.parse(localStorage.getItem('homesense_user') || '{}')
       localStorage.setItem(
         'homesense_user',
-        JSON.stringify({ ...stored, id: p.id, email: p.email })
+        JSON.stringify({
+          ...stored,
+          id: p.id,
+          email: p.email,
+          display_name: p.display_name ?? null,
+        })
       )
       setProfileMessage('Profile saved.')
     } catch (err) {
@@ -115,6 +143,10 @@ function AccountSettings({ darkMode, setDarkMode }) {
     setPasswordError('')
     if (newPassword !== confirmPassword) {
       setPasswordError('New passwords do not match')
+      return
+    }
+    if (newPassword.length < 8) {
+      setPasswordError('New password must be at least 8 characters')
       return
     }
     setSavingPassword(true)
@@ -182,32 +214,21 @@ function AccountSettings({ darkMode, setDarkMode }) {
                     </div>
                   )}
 
-                  <div className="form-row">
-                    <div className="form-group col-md-6">
-                      <label htmlFor="firstName">First Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="firstName"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        placeholder="First name"
-                        disabled={savingProfile}
-                      />
-                    </div>
-
-                    <div className="form-group col-md-6">
-                      <label htmlFor="lastName">Last Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="lastName"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        placeholder="Last name"
-                        disabled={savingProfile}
-                      />
-                    </div>
+                  <div className="form-group">
+                    <label htmlFor="displayName">Display name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="displayName"
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      placeholder="How we greet you on the dashboard"
+                      disabled={savingProfile}
+                    />
+                    <small className="form-text text-muted">
+                      Shown in “Welcome back” on the dashboard. Leave blank to use your email
+                      instead.
+                    </small>
                   </div>
 
                   <div className="form-group">
@@ -386,21 +407,90 @@ function AccountSettings({ darkMode, setDarkMode }) {
         <div className="card shadow-sm border-danger">
           <div className="card-header font-weight-medium text-danger">Danger Zone</div>
 
-          <div className="card-body d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-            <div className="mb-3 mb-md-0">
-              <p className="mb-1 font-weight-medium">Delete Account</p>
-              <p className="text-muted small mb-0">
-                Permanently Remove Your Account and Sensor History.
-              </p>
+          <div className="card-body">
+            <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3">
+              <div>
+                <p className="mb-1 font-weight-medium">Delete account</p>
+                <p className="text-muted small mb-0">
+                  Permanently remove your account, devices, and sensor history. This cannot be
+                  undone.
+                </p>
+              </div>
+
+              {!deleteOpen ? (
+                <button
+                  type="button"
+                  className="btn btn-outline-danger flex-shrink-0"
+                  onClick={() => {
+                    setDeleteOpen(true)
+                    setDeletePassword('')
+                    setDeleteError('')
+                  }}
+                >
+                  Delete account
+                </button>
+              ) : null}
             </div>
 
-            <button
-              type="button"
-              className="btn btn-outline-danger"
-              onClick={() => alert('Delete account (demo)')}
-            >
-              Delete Account
-            </button>
+            {deleteOpen ? (
+              <form
+                className="mt-3 pt-3 border-top"
+                onSubmit={async (e) => {
+                  e.preventDefault()
+                  setDeleteError('')
+                  if (!deletePassword) {
+                    setDeleteError('Enter your password to confirm.')
+                    return
+                  }
+                  setDeleting(true)
+                  try {
+                    await deleteAccount(userId, deletePassword)
+                    localStorage.removeItem('homesense_user')
+                    navigate('/', { replace: true })
+                  } catch (err) {
+                    setDeleteError(err.message || 'Could not delete account')
+                  } finally {
+                    setDeleting(false)
+                  }
+                }}
+              >
+                {deleteError ? (
+                  <div className="alert alert-danger small py-2" role="alert">
+                    {deleteError}
+                  </div>
+                ) : null}
+                <div className="form-group">
+                  <label htmlFor="deletePassword">Confirm with your password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="deletePassword"
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                    placeholder="Current password"
+                    disabled={deleting}
+                    autoComplete="current-password"
+                  />
+                </div>
+                <div className="d-flex flex-wrap gap-2">
+                  <button type="submit" className="btn btn-danger" disabled={deleting}>
+                    {deleting ? 'Deleting…' : 'Permanently delete my account'}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    disabled={deleting}
+                    onClick={() => {
+                      setDeleteOpen(false)
+                      setDeletePassword('')
+                      setDeleteError('')
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : null}
           </div>
         </div>
       </section>

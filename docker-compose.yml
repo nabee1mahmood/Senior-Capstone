@@ -55,7 +55,7 @@ services:
     build:
       context: ./frontend
       args:
-        - VITE_API_URL=http://localhost:3001
+        - VITE_API_URL=
     restart: always
     ports:
       - "3000:80"

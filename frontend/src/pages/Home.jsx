@@ -93,7 +93,9 @@ function Home({ darkMode, setDarkMode }) {
     navigate("/", { replace: true });
   }
 
-  const welcomeName = displayNameFromEmail(user?.email);
+  const welcomeName =
+    (user?.display_name && String(user.display_name).trim()) ||
+    displayNameFromEmail(user?.email);
   const activeDeviceCount = devices.filter((d) => typeof d.reading === "number").length;
   const sensorTypeCount = new Set(
     devices.map((d) => d.sensor_type).filter((sensorType) => Boolean(sensorType))

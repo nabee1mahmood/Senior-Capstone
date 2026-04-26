@@ -4,6 +4,10 @@ import cors from "cors"
 import dotenv from "dotenv"
 import bcrypt from "bcryptjs"
 import { pool, query } from "./db.js"
+import {
+  provisionDefaultDevices,
+  userHasDevices
+} from "./provisionDevices.js"
 
 dotenv.config()
 
@@ -46,6 +50,22 @@ function unitFromSensorType(sensorType, explicitUnit) {
 
 function uidLabel(deviceUid) {
   return deviceUid.replaceAll("-", " ")
+}
+
+/** Map `12-dev-attic-01` → defaults keyed by `dev-attic-01` (legacy uids still work). */
+function defaultReadingForDeviceUid(deviceUid) {
+  if (defaultReadingByUid[deviceUid]) {
+    return defaultReadingByUid[deviceUid]
+  }
+  const m = deviceUid.match(/^\d+-(.+)$/)
+  const suffix = m ? m[1] : deviceUid
+  return (
+    defaultReadingByUid[suffix] || {
+      value: null,
+      sensor_type: null,
+      unit: ""
+    }
+  )
 }
 
 function clamp(value, min, max) {
@@ -110,7 +130,7 @@ function maybeSeedHistory(deviceId, deviceUid) {
   const existing = readingHistoryByDeviceId.get(deviceId)
   if (existing && existing.length > 0) return
 
-  const fallback = defaultReadingByUid[deviceUid]
+  const fallback = defaultReadingForDeviceUid(deviceUid)
   if (!fallback || typeof fallback.value !== "number") return
 
   const now = Date.now()
@@ -151,7 +171,7 @@ app.get("/api/sensors", (req, res) => {
 })
 
 app.post("/api/register", async (req, res) => {
-  const { email, password } = req.body || {}
+  const { email, password, display_name: displayNameRaw } = req.body || {}
 
   if (!email || !password) {
     return res.status(400).json({ message: "Missing fields" })
@@ -165,17 +185,28 @@ app.post("/api/register", async (req, res) => {
     return res.status(500).json({ message: "Database not configured" })
   }
 
+  const displayName =
+    displayNameRaw === undefined || displayNameRaw === null
+      ? null
+      : String(displayNameRaw).trim() || null
+
   try {
     const hash = await bcrypt.hash(password, 10)
     const { rows } = await query(
-      `INSERT INTO users (email, password)
-       VALUES ($1, $2)
-       RETURNING id, email`,
-      [email.trim().toLowerCase(), hash]
+      `INSERT INTO users (email, password, display_name)
+       VALUES ($1, $2, $3)
+       RETURNING id, email, display_name`,
+      [email.trim().toLowerCase(), hash, displayName]
     )
+    const newUser = rows[0]
+    await provisionDefaultDevices(query, newUser.id)
     return res.status(201).json({
       success: true,
-      user: { id: rows[0].id, email: rows[0].email }
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        display_name: newUser.display_name
+      }
     })
   } catch (err) {
     if (err.code === "23505") {
@@ -199,12 +230,14 @@ app.post("/api/login", async (req, res) => {
 
   try {
     const { rows } = await query(
-      "SELECT id, email, password FROM users WHERE lower(email) = lower($1)",
+      "SELECT id, email, password, display_name FROM users WHERE lower(email) = lower($1)",
       [email.trim()]
     )
 
     if (rows.length === 0) {
-      return res.status(401).json({ message: "Invalid email or password" })
+      return res.status(401).json({
+        message: "This account doesn't exist. Try creating one or check your email."
+      })
     }
 
     const user = rows[0]
@@ -217,9 +250,18 @@ app.post("/api/login", async (req, res) => {
       () => {}
     )
 
+    const hasDevices = await userHasDevices(query, user.id)
+    if (!hasDevices) {
+      await provisionDefaultDevices(query, user.id)
+    }
+
     return res.json({
       success: true,
-      user: { id: user.id, email: user.email }
+      user: {
+        id: user.id,
+        email: user.email,
+        display_name: user.display_name
+      }
     })
   } catch (err) {
     console.error(err)
@@ -239,7 +281,7 @@ app.get("/api/users/:userId/profile", async (req, res) => {
 
   try {
     const { rows } = await query(
-      `SELECT id, email, first_name, last_name, phone, last_login_at
+      `SELECT id, email, display_name, first_name, last_name, phone, last_login_at
        FROM users WHERE id = $1`,
       [userId]
     )
@@ -263,18 +305,16 @@ app.patch("/api/users/:userId/profile", async (req, res) => {
     return res.status(400).json({ message: "Invalid user id" })
   }
 
-  const { first_name: firstName, last_name: lastName, email, phone } = req.body || {}
+  const { display_name: displayNameRaw, email, phone } = req.body || {}
   const newEmail = typeof email === "string" ? email.trim().toLowerCase() : ""
   if (!newEmail || !newEmail.includes("@")) {
     return res.status(400).json({ message: "A valid email address is required" })
   }
 
-  const fn =
-    firstName === undefined || firstName === null
+  const displayName =
+    displayNameRaw === undefined || displayNameRaw === null
       ? null
-      : String(firstName).trim() || null
-  const ln =
-    lastName === undefined || lastName === null ? null : String(lastName).trim() || null
+      : String(displayNameRaw).trim() || null
   const ph =
     phone === undefined || phone === null ? null : String(phone).trim() || null
 
@@ -289,10 +329,10 @@ app.patch("/api/users/:userId/profile", async (req, res) => {
 
     const { rows } = await query(
       `UPDATE users
-       SET email = $1, first_name = $2, last_name = $3, phone = $4
-       WHERE id = $5
-       RETURNING id, email, first_name, last_name, phone, last_login_at`,
-      [newEmail, fn, ln, ph, userId]
+       SET email = $1, display_name = $2, phone = $3
+       WHERE id = $4
+       RETURNING id, email, display_name, first_name, last_name, phone, last_login_at`,
+      [newEmail, displayName, ph, userId]
     )
     if (rows.length === 0) {
       return res.status(404).json({ message: "User not found" })
@@ -344,6 +384,38 @@ app.patch("/api/users/:userId/password", async (req, res) => {
   }
 })
 
+app.delete("/api/users/:userId", async (req, res) => {
+  if (!pool) {
+    return res.status(500).json({ message: "Database not configured" })
+  }
+
+  const userId = Number.parseInt(req.params.userId, 10)
+  if (!Number.isFinite(userId)) {
+    return res.status(400).json({ message: "Invalid user id" })
+  }
+
+  const { password } = req.body || {}
+  if (!password) {
+    return res.status(400).json({ message: "Password is required to delete your account" })
+  }
+
+  try {
+    const { rows } = await query("SELECT password FROM users WHERE id = $1", [userId])
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "User not found" })
+    }
+    const ok = await bcrypt.compare(String(password), rows[0].password)
+    if (!ok) {
+      return res.status(401).json({ message: "Invalid password" })
+    }
+    await query("DELETE FROM users WHERE id = $1", [userId])
+    return res.json({ success: true })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({ message: "Could not delete account" })
+  }
+})
+
 app.get("/api/users/:userId/devices", async (req, res) => {
   if (!pool) {
     return res.status(500).json({ message: "Database not configured" })
@@ -388,11 +460,7 @@ app.get("/api/users/:userId/devices/overview", async (req, res) => {
 
     const devices = rows.map((row) => {
       const live = liveReadingByDeviceId.get(row.id)
-      const fallback = defaultReadingByUid[row.device_uid] || {
-        value: null,
-        sensor_type: null,
-        unit: ""
-      }
+      const fallback = defaultReadingForDeviceUid(row.device_uid)
       const source = live || fallback
       const unit = unitFromSensorType(source.sensor_type, source.unit)
       const alert = evaluateAlert(source.sensor_type, source.value, unit)

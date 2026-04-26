@@ -1,17 +1,72 @@
-const API_BASE = (process.env.API_BASE_URL || "http://localhost:8080").replace(/\/$/, "")
-const INTERVAL_MS = Number.parseInt(process.env.FAKE_INTERVAL_MS || "10000", 10)
+import pg from "pg"
 
-const devices = [
-  { device_uid: "dev-attic-01", sensor_type: "temperature", unit: "C", min: 22, max: 37 },
-  { device_uid: "dev-basement-01", sensor_type: "moisture", unit: "%", min: 25, max: 60 },
-  { device_uid: "dev-kitchen-01", sensor_type: "vibration", unit: "", min: 0, max: 1 }
-]
+const API_BASE = (process.env.API_BASE_URL || "http://localhost:3001").replace(/\/$/, "")
+const INTERVAL_MS = Number.parseInt(process.env.FAKE_INTERVAL_MS || "10000", 10)
+const REFRESH_MS = Number.parseInt(process.env.FAKE_DEVICES_REFRESH_MS || "60000", 10)
+
+const PROFILE_BY_SUFFIX = {
+  "dev-attic-01": { sensor_type: "temperature", unit: "C", min: 22, max: 37 },
+  "dev-basement-01": { sensor_type: "moisture", unit: "%", min: 25, max: 60 },
+  "dev-kitchen-01": { sensor_type: "vibration", unit: "", min: 0, max: 1 }
+}
+
+function uidSuffix(deviceUid) {
+  const m = String(deviceUid).match(/^\d+-(.+)$/)
+  return m ? m[1] : deviceUid
+}
+
+function deviceProfile(deviceUid) {
+  const suffix = uidSuffix(deviceUid)
+  const base = PROFILE_BY_SUFFIX[suffix]
+  if (!base) {
+    return {
+      device_uid: deviceUid,
+      sensor_type: "custom",
+      unit: "",
+      min: 0,
+      max: 100
+    }
+  }
+  return { device_uid: deviceUid, ...base }
+}
 
 const stateByDeviceUid = new Map()
+let pool = null
+
+function getPool() {
+  const conn = process.env.DATABASE_URL
+  if (!conn) return null
+  if (!pool) pool = new pg.Pool({ connectionString: conn })
+  return pool
+}
+
+let cachedDevices = []
+
+async function refreshDevicesFromDb() {
+  const p = getPool()
+  if (!p) {
+    console.warn(
+      "[fake-readings] DATABASE_URL not set; using static demo UIDs (set SYNTHETIC_USER_ID=1)"
+    )
+    const uid = (suffix) =>
+      `${process.env.SYNTHETIC_USER_ID || "1"}-${suffix}`
+    cachedDevices = [
+      deviceProfile(uid("dev-attic-01")),
+      deviceProfile(uid("dev-basement-01")),
+      deviceProfile(uid("dev-kitchen-01"))
+    ]
+    return
+  }
+
+  const { rows } = await p.query(
+    "SELECT device_uid FROM devices ORDER BY user_id, id"
+  )
+  cachedDevices = rows.map((r) => deviceProfile(r.device_uid))
+  console.log(`[fake-readings] loaded ${cachedDevices.length} device(s) from DB`)
+}
 
 function nextValue(device) {
   if (device.sensor_type === "vibration") {
-    // Simulate occasional vibration events.
     return Math.random() < 0.18 ? 1 : 0
   }
 
@@ -50,7 +105,10 @@ async function postReading(device) {
 }
 
 async function tick() {
-  for (const device of devices) {
+  if (cachedDevices.length === 0) {
+    await refreshDevicesFromDb()
+  }
+  for (const device of cachedDevices) {
     try {
       const { payload, responseText } = await postReading(device)
       console.log("[fake-readings] ok", payload.device_uid, payload.value, responseText)
@@ -62,8 +120,12 @@ async function tick() {
 
 async function main() {
   console.log(`[fake-readings] posting to ${API_BASE}/api/readings every ${INTERVAL_MS}ms`)
+  await refreshDevicesFromDb()
   await tick()
   setInterval(tick, INTERVAL_MS)
+  setInterval(() => {
+    refreshDevicesFromDb().catch((e) => console.error("[fake-readings] refresh", e.message))
+  }, REFRESH_MS)
 }
 
 main().catch((err) => {
